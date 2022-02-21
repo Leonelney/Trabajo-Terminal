@@ -1,22 +1,13 @@
 import tweepy
 import json
-
-
-def get_credentials():
-    try:
-        with open("./credentials.txt", "r") as f:
-            keys = f.read().split("\n")
-            return keys
-    except:
-        print("An error occurred with the credentials file.")
+import credentials
 
 
 def get_client():
-    keys = get_credentials()
-    client = tweepy.Client(consumer_key=keys[0],
-                           consumer_secret=keys[1],
-                           access_token=keys[2],
-                           access_token_secret=keys[3]
+    client = tweepy.Client(consumer_key=credentials.CONSUMER_KEY,
+                           consumer_secret=credentials.CONSUMER_SECRET,
+                           access_token=credentials.ACCESS_TOKEN,
+                           access_token_secret=credentials.ACCESS_TOKEN_SECRET
                            )
     return client
 
