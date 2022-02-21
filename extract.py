@@ -4,11 +4,12 @@ import credentials
 
 
 def get_client():
-    client = tweepy.Client(consumer_key=credentials.CONSUMER_KEY,
+    client = tweepy.Client(credentials.BEARER_TOKEN)
+    """client = tweepy.Client(consumer_key=credentials.CONSUMER_KEY,
                            consumer_secret=credentials.CONSUMER_SECRET,
                            access_token=credentials.ACCESS_TOKEN,
                            access_token_secret=credentials.ACCESS_TOKEN_SECRET
-                           )
+                           )"""
     return client
 
 
