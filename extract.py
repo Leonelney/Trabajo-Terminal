@@ -1,5 +1,6 @@
 import tweepy
 import json
+import datetime
 import credentials
 
 
@@ -16,7 +17,8 @@ def get_client():
 def search_tweets(query):
     client = get_client()
     tweets = client.search_recent_tweets(query=query,
-                                         max_results=10
+                                         max_results=10,
+                                         tweet_fields=["created_at", "geo", "lang"]
                                          )
     tweets_data = tweets.data
     results = []
@@ -26,6 +28,9 @@ def search_tweets(query):
             obj = {}
             obj['id'] = tweet.id
             obj['text'] = tweet.text
+            obj['created_at'] = (tweet.created_at - datetime.timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')
+            obj['geo'] = tweet.geo
+            obj['lang'] = tweet.lang
             results.append(obj)
     else:
         print("No tweets found")
