@@ -1,6 +1,8 @@
-import tweepy
-import json
+import csv
 import datetime
+import json
+import os
+import tweepy
 import credentials
 
 
@@ -14,12 +16,50 @@ def get_client():
     return client
 
 
+def fill_dataset(data):
+    if not os.path.exists('./data/extracted_tweets.csv'):
+        with open('./data/extracted_tweets.csv', 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile, delimiter=',')
+            csv_writer.writerow(['pubID', 
+                                  'querySearch', 
+                                  'tweet',
+                                  'likeCount',
+                                  'replyCount',
+                                  'retweetCount',
+                                  'authorID',
+                                  'authorName',
+                                  'authorUsername',
+                                  'authorVerified',
+                                  'followersCount',
+                                  'followingCount',
+                                  'pubDate', 
+                                  'pubDay',
+                                  'pubMonth',
+                                  'pubYear',
+                                  'pubHour',
+                                  'extDate',
+                                  'geoID',
+                                  'geoCountry',
+                                  'geoState',
+                                  'geoCity',
+                                  'geoLatitude',
+                                  'geoLongitude'])
+
+    with open('./data/extracted_tweets.csv', 'a', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile, delimiter=',')
+        csv_writer.writerow(data)
+    
+
 def search_tweets(query):
     client = get_client()
     tweets = client.search_recent_tweets(query=query,
-                                         max_results=40,
-                                         tweet_fields=["created_at", "geo", "lang"],
-                                         expansions=["geo.place_id"]
+                                         max_results=100,
+                                         tweet_fields=['created_at', 'geo', 'lang'],
+                                         user_fields = ['created_at','public_metrics', 'verified'],
+                                         place_fields = ['country', 'geo', 'name'],
+                                         expansions=['geo.place_id'],
+                                         start_time=[datetime.datetime(2020,1,1)],
+                                         end_time = []
                                          )
     tweets_data = tweets.data
     tweets_includes = tweets.includes
@@ -37,19 +77,20 @@ def search_tweets(query):
             results.append(obj)
 
     else:
-        print("No tweets found")
+        print('No tweets found')
         return
 
-    with open("./data/tweets_extract.json", "w", encoding="utf-8") as f:
+    with open('./data/tweets_extract.json', 'w', encoding='utf-8') as f:
         f.write(json.dumps(results))
 
-    print("Tweets found")
+    print('Tweets found')
 
 
 def main():
     query = 'pirotecnia'
-    search_tweets(query)
+    #search_tweets(query)
+    fill_dataset(['Hola', 'Mundo'])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
