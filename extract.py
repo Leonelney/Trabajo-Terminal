@@ -1,7 +1,7 @@
 import csv
 import datetime
-import json
 import os
+import sys
 import tweepy
 import credentials
 
@@ -20,77 +20,144 @@ def fill_dataset(data):
     if not os.path.exists('./data/extracted_tweets.csv'):
         with open('./data/extracted_tweets.csv', 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=',')
-            csv_writer.writerow(['pubID', 
-                                  'querySearch', 
-                                  'tweet',
-                                  'likeCount',
-                                  'replyCount',
-                                  'retweetCount',
-                                  'authorID',
-                                  'authorName',
-                                  'authorUsername',
-                                  'authorVerified',
-                                  'followersCount',
-                                  'followingCount',
-                                  'pubDate', 
-                                  'pubDay',
-                                  'pubMonth',
-                                  'pubYear',
-                                  'pubHour',
-                                  'extDate',
-                                  'geoID',
-                                  'geoCountry',
-                                  'geoState',
-                                  'geoCity',
-                                  'geoLatitude',
-                                  'geoLongitude'])
+            csv_writer.writerow(['pubID',
+                                 'querySearch',
+                                 'tweet',
+                                 'likeCount',
+                                 'replyCount',
+                                 'retweetCount',
+                                 'authorID',
+                                 'authorName',
+                                 'authorUsername',
+                                 'authorCreatedAt',
+                                 'authorVerified',
+                                 'followersCount',
+                                 'followingCount',
+                                 'pubDate',
+                                 'pubYear',
+                                 'pubMonth',
+                                 'pubDay',
+                                 'pubHour',
+                                 'pubMinute',
+                                 'extDate',
+                                 'geoID',
+                                 'geoCountry',
+                                 'geoFullname',
+                                 'geoName',
+                                 'geoType',
+                                 'geoBbox'])
 
     with open('./data/extracted_tweets.csv', 'a', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
-        csv_writer.writerow(data)
-    
+        csv_writer.writerows(data)
 
-def search_tweets(query):
+
+def search_tweets(query, start_time, end_time):
     client = get_client()
     tweets = client.search_recent_tweets(query=query,
                                          max_results=100,
-                                         tweet_fields=['created_at', 'geo', 'lang'],
-                                         user_fields = ['created_at','public_metrics', 'verified'],
-                                         place_fields = ['country', 'geo', 'name'],
-                                         expansions=['geo.place_id'],
-                                         start_time=[datetime.datetime(2020,1,1)],
-                                         end_time = []
+                                         tweet_fields=[
+                                             'created_at', 'geo', 'public_metrics', 'author_id'],
+                                         user_fields=[
+                                             'created_at', 'public_metrics', 'verified'],
+                                         place_fields=[
+                                             'country', 'geo', 'name', 'place_type'],
+                                         expansions=[
+                                             'geo.place_id', 'author_id'],
+                                         start_time=start_time +
+                                         datetime.timedelta(hours=6),
+                                         end_time=end_time +
+                                         datetime.timedelta(hours=6)
                                          )
+    ext_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     tweets_data = tweets.data
-    tweets_includes = tweets.includes
-    if tweets_includes:
-        dict_places = {places.id:places.full_name for places in tweets_includes['places']}  
-    results = []
 
-    if len(tweets_data) > 0:
+    if tweets_data:
+        tweets_includes = tweets.includes
+        if tweets_includes:
+            user_objects = {}
+            place_objects = {}
+            for expansion in tweets_includes.keys():
+                if expansion == 'users':
+                    user_objects = {
+                        user.id: {
+                            'authorName': user.name,
+                            'authorUsername': user.username,
+                            'authorCreatedAt': user.created_at,
+                            'authorVerified': user.verified,
+                            'followersCount': user.public_metrics['followers_count'],
+                            'followingCount': user.public_metrics['following_count']
+                        } for user in tweets_includes['users']}
+                if expansion == 'places':
+                    place_objects = {
+                        place.id: {
+                            'geoCountry': place.country,
+                            'geoFullname': place.full_name,
+                            'geoName': place.name,
+                            'geoType': place.place_type,
+                            'geoBbox': place.geo['bbox']
+                        } for place in tweets_includes['places']}
+
+        results = []
         for tweet in tweets_data:
-            obj = {}
-            obj['data'] = tweet['data']
-            obj['data']['created_at'] = (tweet.created_at - datetime.timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S')
-            if tweet.geo:
-                obj['data']['geo_name'] = dict_places[tweet.geo['place_id']]
-            results.append(obj)
+            tweet_row = []
+            tweet_row.append(tweet.id)
+            tweet_row.append(query)
+            tweet_row.append(tweet.text)
+            tweet_row.append(tweet.public_metrics['like_count'])
+            tweet_row.append(tweet.public_metrics['reply_count'])
+            tweet_row.append(tweet.public_metrics['retweet_count'])
+            tweet_row.append(tweet.author_id)
+            tweet_row.append(user_objects[tweet.author_id]['authorName'])
+            tweet_row.append(user_objects[tweet.author_id]['authorUsername'])
+            tweet_row.append((user_objects[tweet.author_id]['authorCreatedAt']
+                              - datetime.timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S'))
+            tweet_row.append(user_objects[tweet.author_id]['authorVerified'])
+            tweet_row.append(user_objects[tweet.author_id]['followersCount'])
+            tweet_row.append(user_objects[tweet.author_id]['followingCount'])
+            tweet_date = tweet.created_at-datetime.timedelta(hours=6)
+            tweet_row.append(tweet_date.strftime('%Y-%m-%d %H:%M:%S'))
+            tweet_row.append(tweet_date.strftime('%Y'))
+            tweet_row.append(tweet_date.strftime('%m'))
+            tweet_row.append(tweet_date.strftime('%d'))
+            tweet_row.append(tweet_date.strftime('%H'))
+            tweet_row.append(tweet_date.strftime('%M'))
+            tweet_row.append(ext_date)
+            try:
+                tweet_row.append(tweet.geo['place_id'])
+                tweet_row.append(
+                    place_objects[tweet.geo['place_id']]['geoCountry'])
+                tweet_row.append(
+                    place_objects[tweet.geo['place_id']]['geoFullname'])
+                tweet_row.append(
+                    place_objects[tweet.geo['place_id']]['geoName'])
+                tweet_row.append(
+                    place_objects[tweet.geo['place_id']]['geoType'])
+                tweet_row.append(
+                    place_objects[tweet.geo['place_id']]['geoBbox'])
+            except:
+                for i in range(6):
+                    tweet_row.append(None)
 
+            results.append(tweet_row)
+
+        fill_dataset(results)
     else:
         print('No tweets found')
         return
 
-    with open('./data/tweets_extract.json', 'w', encoding='utf-8') as f:
-        f.write(json.dumps(results))
 
-    print('Tweets found')
+def main(day, month, query):
+    for i in range(23):
+        search_tweets(query, datetime.datetime(2022, month, day, hour=i),
+                      datetime.datetime(2022, month, day, hour=i+1))
 
-
-def main():
-    query = 'pirotecnia'
-    #search_tweets(query)
-    fill_dataset(['Hola', 'Mundo'])
+    search_tweets(query, datetime.datetime(2022, month, day, hour=23),
+                  datetime.datetime(2022, month, day+1))
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 4:
+        main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
+    else:
+        print("Introduce the day, month and query in console's args.")
