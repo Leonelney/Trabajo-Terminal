@@ -16,9 +16,10 @@ def get_client():
     return client
 
 
-def fill_dataset(data):
-    if not os.path.exists('./data/extracted_tweets.csv'):
-        with open('./data/extracted_tweets.csv', 'w', newline='') as csvfile:
+def fill_dataset(data, file_name):
+    file = f'./data/{file_name}'
+    if not os.path.exists(file):
+        with open(file, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=',')
             csv_writer.writerow(['pubID',
                                  'querySearch',
@@ -47,12 +48,12 @@ def fill_dataset(data):
                                  'geoType',
                                  'geoBbox'])
 
-    with open('./data/extracted_tweets.csv', 'a', newline='') as csvfile:
+    with open(file, 'a', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
         csv_writer.writerows(data)
 
 
-def search_tweets(query, start_time, end_time):
+def search_tweets(query, start_time, end_time, file_name):
     client = get_client()
     tweets = client.search_recent_tweets(query=query,
                                          max_results=100,
@@ -141,23 +142,34 @@ def search_tweets(query, start_time, end_time):
 
             results.append(tweet_row)
 
-        fill_dataset(results)
+        fill_dataset(results, file_name)
     else:
-        print('No tweets found')
-        return
+        return 0
+
+    return len(tweets_data)
 
 
-def main(day, month, query):
-    for i in range(23):
-        search_tweets(query, datetime.datetime(2022, month, day, hour=i),
-                      datetime.datetime(2022, month, day, hour=i+1))
+def main(day, month, file_name):
+    try:
+        with open('./data/querys.txt', 'r', encoding='utf-8') as file:
+            for query in file:
+                tweets_found = 0
+                query_clean = query.replace("\n","")
+                for i in range(23):
+                    tweets_found += search_tweets(query_clean, datetime.datetime(2022, month, day, hour=i),
+                                                  datetime.datetime(2022, month, day, hour=i+1), file_name)
 
-    search_tweets(query, datetime.datetime(2022, month, day, hour=23),
-                  datetime.datetime(2022, month, day+1))
+                tweets_found += search_tweets(query_clean, datetime.datetime(2022, month, day, hour=23),
+                                              datetime.datetime(2022, month, day+1), file_name)
+                
+                print(f'The query "{query_clean}" on date {datetime.datetime(2022, month, day).strftime("%Y-%m-%d")} returned {tweets_found} results.')
+
+    except FileNotFoundError:
+        print("The file whit the querys doesn't exist.")
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 4:
+    try:
         main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
-    else:
-        print("Introduce the day, month and query in console's args.")
+    except IndexError:
+        print("Introduce the day, month and file_name of the search in console's args.")

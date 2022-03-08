@@ -1,5 +1,4 @@
 venv
 credentials.py
 __pycache__
-tweets_extract.json
-extracted_tweets.csv
+*.csv
