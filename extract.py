@@ -149,9 +149,9 @@ def search_tweets(query, start_time, end_time, file_name):
     return len(tweets_data)
 
 
-def main(day, month, file_name):
+def main(day, month, query_file, file_name):
     try:
-        with open('./data/querys.txt', 'r', encoding='utf-8') as file:
+        with open(f'./data/{query_file}', 'r', encoding='utf-8') as file:
             for query in file:
                 tweets_found = 0
                 query_clean = query.replace("\n","")
@@ -170,6 +170,6 @@ def main(day, month, file_name):
 
 if __name__ == '__main__':
     try:
-        main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
+        main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4])
     except IndexError:
         print("Introduce the day, month and file_name of the search in console's args.")
