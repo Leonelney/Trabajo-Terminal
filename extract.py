@@ -257,7 +257,6 @@ def main(query_file, file_name):
 
 if __name__ == '__main__':
     try:
-        #main(sys.argv[1], sys.argv[2])
-        main('querys.txt', 'ejemplo.csv')
+        main(sys.argv[1], sys.argv[2])
     except IndexError:
         print("Introduce the query_file and file_name of the search in console's args.")
