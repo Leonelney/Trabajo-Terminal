@@ -144,7 +144,7 @@ def search_tweets_tweepy(query, start_time, end_time, file_name):
                 for i in range(6):
                     tweet_row.append(None)
             try:
-                tweet_row.append(tweet.geo['coordinates'])
+                tweet_row.append(tweet.geo['coordinates'].coordinates)
             except:
                 tweet_row.append(None)
 
@@ -202,7 +202,13 @@ def search_tweets_snscrape(query, start, end, file_name):
             for i in range(4):
                 tweet_row.append(None)
         tweet_row.append(None)
-        tweet_row.append(tweet.coordinates)
+        if tweet.coordinates != None:
+            coordinate = []
+            coordinate.append(tweet.coordinates.longitude)
+            coordinate.append(tweet.coordinates.latitude)
+            tweet_row.append(coordinate)
+        else:
+            tweet_row.append(tweet.coordinates)
 
         results.append(tweet_row)
     
