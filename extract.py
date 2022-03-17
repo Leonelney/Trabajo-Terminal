@@ -222,7 +222,8 @@ def main(query_file, file_name):
                     os.system('clear')
                     day=int(input('- Define the search day: '))
                     month=int(input('- Define the search month: '))
-
+                    os.system('clear')
+                    
                     for query in file:
                         tweets_found=0
                         query_clean=query.replace("\n", "")
@@ -256,7 +257,7 @@ def main(query_file, file_name):
 
 if __name__ == '__main__':
     try:
-        main(sys.argv[1], sys.argv[2])
-        #main('querys.txt', 'ejemplo.csv')
+        #main(sys.argv[1], sys.argv[2])
+        main('querys.txt', 'ejemplo.csv')
     except IndexError:
         print("Introduce the query_file and file_name of the search in console's args.")
