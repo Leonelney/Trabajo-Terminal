@@ -1,8 +1,11 @@
+from calendar import month
 import csv
 import datetime
+import calendar
 import os
 import sys
 import tweepy
+import snscrape.modules.twitter as sntwitter
 import credentials
 
 
@@ -46,14 +49,15 @@ def fill_dataset(data, file_name):
                                  'geoFullname',
                                  'geoName',
                                  'geoType',
-                                 'geoBbox'])
+                                 'geoBbox',
+                                 'geoCoordinates'])
 
     with open(file, 'a', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
         csv_writer.writerows(data)
 
 
-def search_tweets(query, start_time, end_time, file_name):
+def search_tweets_tweepy(query, start_time, end_time, file_name):
     client = get_client()
     tweets = client.search_recent_tweets(query=query,
                                          max_results=100,
@@ -139,6 +143,10 @@ def search_tweets(query, start_time, end_time, file_name):
             except:
                 for i in range(6):
                     tweet_row.append(None)
+            try:
+                tweet_row.append(tweet.geo['coordinates'].coordinates)
+            except:
+                tweet_row.append(None)
 
             results.append(tweet_row)
 
@@ -149,27 +157,112 @@ def search_tweets(query, start_time, end_time, file_name):
     return len(tweets_data)
 
 
-def main(day, month, query_file, file_name):
-    try:
-        with open(f'./data/{query_file}', 'r', encoding='utf-8') as file:
-            for query in file:
-                tweets_found = 0
-                query_clean = query.replace("\n","")
-                for i in range(23):
-                    tweets_found += search_tweets(query_clean, datetime.datetime(2022, month, day, hour=i),
-                                                  datetime.datetime(2022, month, day, hour=i+1), file_name)
+def search_tweets_snscrape(query, start, end, file_name):
+    start_date_time = datetime.datetime.strptime(
+        start, '%Y-%m-%d') + datetime.timedelta(hours=6)
+    end_date_time = datetime.datetime.strptime(
+        end, '%Y-%m-%d') + datetime.timedelta(hours=6)
 
-                tweets_found += search_tweets(query_clean, datetime.datetime(2022, month, day, hour=23),
-                                              datetime.datetime(2022, month, day+1), file_name)
-                
-                print(f'The query "{query_clean}" on date {datetime.datetime(2022, month, day).strftime("%Y-%m-%d")} returned {tweets_found} results.')
+    full_query = query + \
+        f' since_time:{calendar.timegm(start_date_time.utctimetuple())} until_time:{calendar.timegm(end_date_time.utctimetuple())}'
+
+    results = []
+    tweets_found = 0
+    ext_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    for tweets_found, tweet in enumerate(sntwitter.TwitterSearchScraper(full_query).get_items()):
+        tweet_row = []
+        tweet_row.append(tweet.id)
+        tweet_row.append(query)
+        tweet_row.append(tweet.content)
+        tweet_row.append(tweet.likeCount)
+        tweet_row.append(tweet.replyCount)
+        tweet_row.append(tweet.retweetCount)
+        tweet_row.append(tweet.user.id)
+        tweet_row.append(tweet.user.displayname)
+        tweet_row.append(tweet.user.username)
+        tweet_row.append((tweet.user.created - datetime.timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S'))
+        tweet_row.append(tweet.user.verified)
+        tweet_row.append(tweet.user.followersCount)
+        tweet_row.append(tweet.user.friendsCount)
+        tweet_date = tweet.date - datetime.timedelta(hours=6)
+        tweet_row.append(tweet_date.strftime('%Y-%m-%d %H:%M:%S'))
+        tweet_row.append(tweet_date.strftime('%Y'))
+        tweet_row.append(tweet_date.strftime('%m'))
+        tweet_row.append(tweet_date.strftime('%d'))
+        tweet_row.append(tweet_date.strftime('%H'))
+        tweet_row.append(tweet_date.strftime('%M'))
+        tweet_row.append(ext_date)
+        tweet_row.append(None)
+        if tweet.place != None:
+            tweet_row.append(tweet.place.country)
+            tweet_row.append(tweet.place.fullName)
+            tweet_row.append(tweet.place.name)
+            tweet_row.append(tweet.place.type)
+        else:
+            for i in range(4):
+                tweet_row.append(None)
+        tweet_row.append(None)
+        if tweet.coordinates != None:
+            coordinate = []
+            coordinate.append(tweet.coordinates.longitude)
+            coordinate.append(tweet.coordinates.latitude)
+            tweet_row.append(coordinate)
+        else:
+            tweet_row.append(tweet.coordinates)
+
+        results.append(tweet_row)
+    
+    fill_dataset(results, file_name)
+    return tweets_found
+
+
+
+def main(query_file, file_name):
+    os.system('clear')
+    try:
+        with open(f'./data/{query_file}', 'r', encoding = 'utf-8') as file:
+            while True:
+                method=input(
+                    'Which method will you use? Tweepy or Snscrape (t/s)?: ')
+                if method == 't':
+                    os.system('clear')
+                    day=int(input('- Define the search day: '))
+                    month=int(input('- Define the search month: '))
+                    os.system('clear')
+                    
+                    for query in file:
+                        tweets_found=0
+                        query_clean=query.replace("\n", "")
+                        for i in range(23):
+                            tweets_found += search_tweets_tweepy(query_clean, datetime.datetime(2022, month, day, hour=i),
+                                                        datetime.datetime(2022, month, day, hour=i+1), file_name)
+
+                        tweets_found += search_tweets_tweepy(query_clean, datetime.datetime(2022, month, day, hour=23),
+                                                    datetime.datetime(2022, month, day+1), file_name)
+                        
+                        print("*"*90)
+                        print(f'The query "{query_clean}" \n\non date {datetime.datetime(2022, month, day).strftime("%Y-%m-%d")} \n\nreturned {tweets_found} results.\n')
+                    break
+                elif method == 's':
+                    os.system('clear')
+                    start_date = input('Define the start date (YYYY-mm-dd):')
+                    end_date = input('Define the end date (YYYY-mm-dd):')
+                    os.system('clear')
+
+                    for query in file:
+                        query_clean = query.replace("\n","")
+                        tweets_found = search_tweets_snscrape(query_clean, start_date, end_date, file_name)
+
+                        print("*"*90)
+                        print(f'The query "{query_clean}" \n\nfrom {start_date} to {end_date} \n\nreturned {tweets_found} results.\n')
+                    break
 
     except FileNotFoundError:
         print("The file whit the querys doesn't exist.")
-
+    
 
 if __name__ == '__main__':
     try:
-        main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], sys.argv[4])
+        main(sys.argv[1], sys.argv[2])
     except IndexError:
-        print("Introduce the day, month and file_name of the search in console's args.")
+        print("Introduce the query_file and file_name of the search in console's args.")
