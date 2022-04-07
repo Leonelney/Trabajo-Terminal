@@ -237,8 +237,12 @@ def main(query_file, file_name):
                             tweets_found += search_tweets_tweepy(query_clean, datetime.datetime(2022, month, day, hour=i),
                                                         datetime.datetime(2022, month, day, hour=i+1), file_name)
 
-                        tweets_found += search_tweets_tweepy(query_clean, datetime.datetime(2022, month, day, hour=23),
+                        try:
+                            tweets_found += search_tweets_tweepy(query_clean, datetime.datetime(2022, month, day, hour=23),
                                                     datetime.datetime(2022, month, day+1), file_name)
+                        except ValueError:
+                            tweets_found += search_tweets_tweepy(query_clean, datetime.datetime(2022, month, day, hour=23),
+                                                    datetime.datetime(2022, month+1, 1), file_name)
                         
                         print("*"*90)
                         print(f'The query "{query_clean}" \n\non date {datetime.datetime(2022, month, day).strftime("%Y-%m-%d")} \n\nreturned {tweets_found} results.\n')
