@@ -22,7 +22,7 @@ def get_client():
 def fill_dataset(data, file_name):
     file = f'./data/{file_name}'
     if not os.path.exists(file):
-        with open(file, 'w', newline='') as csvfile:
+        with open(file, 'w', newline='', encoding='utf-8') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=',')
             csv_writer.writerow(['pubID',
                                  'querySearch',
@@ -52,7 +52,7 @@ def fill_dataset(data, file_name):
                                  'geoBbox',
                                  'geoCoordinates'])
 
-    with open(file, 'a', newline='') as csvfile:
+    with open(file, 'a', newline='', encoding='utf-8') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
         csv_writer.writerows(data)
 
@@ -220,7 +220,7 @@ def search_tweets_snscrape(query, start, end, file_name):
 def main(query_file, file_name):
     os.system('clear')
     try:
-        with open(f'./data/{query_file}', 'r', encoding = 'utf-8') as file:
+        with open(f'./querys/{query_file}', 'r', encoding = 'utf-8') as file:
             while True:
                 method=input(
                     'Which method will you use? Tweepy or Snscrape (t/s)?: ')
