@@ -1,3 +1,6 @@
 venv
 credentials.py
 __pycache__
+commit.txt
+get_day_ext.py
+script.cmd
