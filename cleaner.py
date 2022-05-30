@@ -95,7 +95,11 @@ def main():
     df_main['authorID'] = df_author['authorID']
     df_main['dateID'] = df_date['dateID']
 
+    
+
     print(df_main)
+    print(df_author)
+    print(df_data)
 
     
 
