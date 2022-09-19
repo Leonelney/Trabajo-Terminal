@@ -9,7 +9,7 @@ import datetime
 import calendar
 import os
 import sys
-import timezone #pytz
+from pytz import timezone
 import tweepy
 import snscrape.modules.twitter as sntwitter
 import credentials
