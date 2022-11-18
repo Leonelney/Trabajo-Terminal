@@ -157,10 +157,8 @@ def search_tweets_tweepy(query, start_time, end_time, file_name):
 
 
 def search_tweets_snscrape(query, start, end, file_name):
-    start_date_time = datetime.datetime.strptime(
-        start, '%Y-%m-%d') + datetime.timedelta(hours=6)
-    end_date_time = datetime.datetime.strptime(
-        end, '%Y-%m-%d') + datetime.timedelta(hours=6)
+    start_date_time = datetime.datetime.strptime(start, '%Y-%m-%d') + datetime.timedelta(hours=6)
+    end_date_time = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(hours=6)
 
     full_query = query + \
         f' since_time:{calendar.timegm(start_date_time.utctimetuple())} until_time:{calendar.timegm(end_date_time.utctimetuple())}'
