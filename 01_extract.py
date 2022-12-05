@@ -8,6 +8,7 @@ class database:
     def __init__(self):
         self.columns =  ['pubID',
                         'topicQuery',
+                        'typeQuery',
                         'tweet',
                         'likeCount',
                         'replyCount',
@@ -44,10 +45,11 @@ class database:
             file.write(f'[pirotecnia: {len(self.df[self.df.topicQuery == "pirotecnia"])}, tránsito: {len(self.df[self.df.topicQuery == "tránsito"])}, incendio: {len(self.df[self.df.topicQuery == "incendio"])}]')
             file.write('\n')
 
-def save_register(tweet, query, geoid, coordenadas, name_mun):
+def save_register(tweet, query, typeQuery, geoid, coordenadas, name_mun):
     tweet_row = []
     tweet_row.append(tweet.id)
     tweet_row.append(query.split(' ')[0][1:])
+    tweet_row.append(typeQuery)
     tweet_row.append(tweet.content)
     tweet_row.append(tweet.likeCount)
     tweet_row.append(tweet.replyCount)
@@ -99,9 +101,8 @@ def search_tweets_snscrape(query, start_date, end_date):
     ]
 
     meta_search = '-is:retweet'
-    filter_tweets = '(contaminación OR contaminar OR contingencia OR ambiente OR accidente OR precaución OR denuncia OR denunciar OR reporte OR reportar)'
     start_date_time = datetime.datetime.strptime(start_date, '%Y-%m-%d') + \
-                      datetime.timedelta(hours=6)
+                    datetime.timedelta(hours=6)
     start_date_time = calendar.timegm(start_date_time.utctimetuple())
     end_date_time = datetime.datetime.strptime(end_date, '%Y-%m-%d') + \
                     datetime.timedelta(hours=6)
@@ -109,20 +110,20 @@ def search_tweets_snscrape(query, start_date, end_date):
 
     results = []
     for geoid, coordenadas, radio, name_mun, mun_query in geo_municipios:
-        new_query = f'{query} {filter_tweets} geocode:{coordenadas},{radio} since:{start_date_time} until:{end_date_time} {meta_search}'
+        new_query = f'{query[0]} {query[1]} geocode:{coordenadas},{radio} since:{start_date_time} until:{end_date_time} {meta_search}'
         for tweet in list(sntwitter.TwitterSearchScraper(new_query).get_items()):
-            results.append(save_register(tweet, query, geoid, coordenadas, name_mun))
-        new_query = f'{query} {filter_tweets} alcaldia {mun_query} since:{start_date_time} until:{end_date_time} {meta_search}'
+            results.append(save_register(tweet, query, 'coordenadas', geoid, coordenadas, name_mun))
+        new_query = f'{query[0]} {query[1]} alcaldia {mun_query} since:{start_date_time} until:{end_date_time} {meta_search}'
         for tweet in list(sntwitter.TwitterSearchScraper(new_query).get_items()):
-            results.append(save_register(tweet, query, geoid, coordenadas, name_mun))
+            results.append(save_register(tweet, query, 'palabras clave', geoid, coordenadas, name_mun))
 
     return results
 
 def main():
     topics = [
-        "(pirotecnia OR cohete OR 'fuegos artificiales' OR petardo)",
-        "(tránsito OR tráfico OR circulación OR translado)",
-        "(incendio OR quema OR humo OR fuego)"
+        ("(pirotecnia OR cohete OR 'fuegos artificiales' OR petardo)", ""),
+        ("(tránsito OR tráfico OR circulación OR translado)", ""),
+        ("(incendio OR quema OR humo OR fuego)", "")
     ]
 
     year = input('Define the year (YYYY): ')
