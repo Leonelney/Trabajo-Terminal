@@ -74,8 +74,8 @@ def save_register(tweet, query, typeQuery, geoid, coordenadas, name_mun):
         tweet_row.append(tweet.coordinates.longitude)
         tweet_row.append(tweet.coordinates.latitude)
     else:
-        tweet_row.append(coordenadas.split(',')[0])
         tweet_row.append(coordenadas.split(',')[1])
+        tweet_row.append(coordenadas.split(',')[0])
     
     return tweet_row
 
