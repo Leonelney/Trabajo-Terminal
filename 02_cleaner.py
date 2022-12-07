@@ -3,10 +3,13 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 import spacy
 from autocorrect import Speller
+import requests
+import json
 import re
 import datetime
 import pandas as pd
 import numpy as np
+import credentials
 
 def tokens_tweet(tweet):
     pattern = r'''(?x)           # set flag to allow verbose regexps
@@ -34,15 +37,52 @@ def tokens_tweet(tweet):
     spell = Speller(lang='es')
     interesting_tokens = [spell(w) for w in interesting_tokens]
     # lematización
-    nlp = spacy.load("es_core_news_sm")
+    nlp = spacy.load("es_dep_news_trf")
     doc = nlp(' '.join(interesting_tokens))
     interesting_tokens = [w.lemma_ for w in doc]
 
     return interesting_tokens
 
 
+def mun_request(row):
+    geo_mun = {
+        'Azcapotzalco': 2,
+        'Coyoacán': 3,
+        'Cuajimalpa de Morelos': 4,
+        'Gustavo A. Madero': 5,
+        'Iztacalco': 6,
+        'Iztapalapa': 7,
+        'La Magdalena Contreras': 8,
+        'Milpa Alta': 9,
+        'Álvaro Obregón': 10,
+        'Tláhuac': 11,
+        'Tlalpan': 12,
+        'Xochimilco': 13,
+        'Benito Juárez': 14,
+        'Cuauhtémoc': 15, 
+        'Miguel Hidalgo': 16, 
+        'Venustiano Carranza': 17
+    }
+    if row['typeQuery'] == 'coordenadas':
+        url = f"https://maps.googleapis.com/maps/api/geocode/json?latlng={row['latitude']},{row['longitude']}&key={credentials.GOOGLE_MAPS_KEY}"
+        res = requests.get(url)
+        elements = res.json()
+        mun = ''
+        if  re.search("CDMX", elements['plus_code']['compound_code']):
+            for i in elements['results']:
+                if i['address_components'][0]['long_name'] in geo_mun.keys():
+                    mun = i['address_components'][0]['long_name']
+                    row['geoID'] = geo_mun[mun]
+                    row['geoName'] = mun
+                    break
+        else:
+            row['geoID'] = 0
+    return row
+
+
 def main():
-    for año in range(19,23):
+    
+    for año in range(20,23):
         print(año)
         for mes in range (1,13):
             print(f'\t{mes}')
@@ -53,6 +93,10 @@ def main():
                 df = pd.read_csv(f'./new_data/tweets_{mes}{año}.csv')
             # eliminamos registros repetidos
             df = df.drop_duplicates(['pubID'])
+            # obtener el municipio correcto de los registros extraídos por coordenadas
+            df = df.apply(mun_request, axis=1)
+            # eliminar registros que están fuera de la CDMX
+            df = df.drop(df[df['geoID'] == 0].index)
             # cambiaremos los tipos de datos bool a 0 y 1 para su uso en MySQL
             df['authorVerified'] = df['authorVerified'].apply(lambda x: 1 if x else 0)
             # eliminamos registros con posibles datos nulos de los campos importantes.
