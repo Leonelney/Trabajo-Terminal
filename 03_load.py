@@ -1,5 +1,10 @@
 import numpy as np
 import pandas as pd
+import re
+import emoji
+
+def deEmojify(text):
+    return emoji.replace_emoji(text, "")
 
 def main():
     df = pd.DataFrame()
@@ -25,7 +30,11 @@ def main():
 
     idx = list(df.index)
 
+    main['tweet'] = main['tweet'].apply(lambda x: x.replace("\n", " "))
+    main['tweet'] = main['tweet'].apply(deEmojify)
     main.insert(7, 'dateID', list(map(lambda x: 'd'+str(x+1), idx)))
+    author['authorName'] = author['authorName'].apply(deEmojify)
+    author['authorUsername'] = author['authorUsername'].apply(deEmojify)
     date.insert(0, 'dateID', list(map(lambda x: 'd'+str(x+1), idx)))
     geo.insert(2, 'coordinateID', list(map(lambda x: 'c'+str(x+1), idx)))
     coordinates.insert(0, 'coordinateID', list(map(lambda x: 'c'+str(x+1), idx)))
