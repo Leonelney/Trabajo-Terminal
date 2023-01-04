@@ -10,11 +10,11 @@ import credentials
 
 def get_client():
     client = tweepy.Client(bearer_token=credentials.BEARER_TOKEN,
-                           consumer_key=credentials.CONSUMER_KEY,
-                           consumer_secret=credentials.CONSUMER_SECRET,
-                           access_token=credentials.ACCESS_TOKEN,
-                           access_token_secret=credentials.ACCESS_TOKEN_SECRET
-                           )
+                            consumer_key=credentials.CONSUMER_KEY,
+                            consumer_secret=credentials.CONSUMER_SECRET,
+                            access_token=credentials.ACCESS_TOKEN,
+                            access_token_secret=credentials.ACCESS_TOKEN_SECRET
+                            )
     return client
 
 
@@ -24,32 +24,32 @@ def fill_dataset(data, file_name):
         with open(file, 'w', newline='', encoding='utf-8') as csvfile:
             csv_writer = csv.writer(csvfile, delimiter=',')
             csv_writer.writerow(['pubID',
-                                 'querySearch',
-                                 'tweet',
-                                 'likeCount',
-                                 'replyCount',
-                                 'retweetCount',
-                                 'authorID',
-                                 'authorName',
-                                 'authorUsername',
-                                 'authorCreatedAt',
-                                 'authorVerified',
-                                 'followersCount',
-                                 'followingCount',
-                                 'pubDate',
-                                 'pubYear',
-                                 'pubMonth',
-                                 'pubDay',
-                                 'pubHour',
-                                 'pubMinute',
-                                 'extDate',
-                                 'geoID',
-                                 'geoCountry',
-                                 'geoFullname',
-                                 'geoName',
-                                 'geoType',
-                                 'geoBbox',
-                                 'geoCoordinates'])
+                                'querySearch',
+                                'tweet',
+                                'likeCount',
+                                'replyCount',
+                                'retweetCount',
+                                'authorID',
+                                'authorName',
+                                'authorUsername',
+                                'authorCreatedAt',
+                                'authorVerified',
+                                'followersCount',
+                                'followingCount',
+                                'pubDate',
+                                'pubYear',
+                                'pubMonth',
+                                'pubDay',
+                                'pubHour',
+                                'pubMinute',
+                                'extDate',
+                                'geoID',
+                                'geoCountry',
+                                'geoFullname',
+                                'geoName',
+                                'geoType',
+                                'geoBbox',
+                                'geoCoordinates'])
 
     with open(file, 'a', newline='', encoding='utf-8') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',')
@@ -59,20 +59,20 @@ def fill_dataset(data, file_name):
 def search_tweets_tweepy(query, start_time, end_time, file_name):
     client = get_client()
     tweets = client.search_recent_tweets(query=query,
-                                         max_results=100,
-                                         tweet_fields=[
-                                             'created_at', 'geo', 'public_metrics', 'author_id'],
-                                         user_fields=[
-                                             'created_at', 'public_metrics', 'verified'],
-                                         place_fields=[
-                                             'country', 'geo', 'name', 'place_type'],
-                                         expansions=[
-                                             'geo.place_id', 'author_id'],
-                                         start_time=start_time +
-                                         datetime.timedelta(hours=6),
-                                         end_time=end_time +
-                                         datetime.timedelta(hours=6)
-                                         )
+                                        max_results=100,
+                                        tweet_fields=[
+                                            'created_at', 'geo', 'public_metrics', 'author_id'],
+                                        user_fields=[
+                                            'created_at', 'public_metrics', 'verified'],
+                                        place_fields=[
+                                            'country', 'geo', 'name', 'place_type'],
+                                        expansions=[
+                                            'geo.place_id', 'author_id'],
+                                        start_time=start_time +
+                                        datetime.timedelta(hours=6),
+                                        end_time=end_time +
+                                        datetime.timedelta(hours=6)
+                                        )
     ext_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     tweets_data = tweets.data
 
@@ -115,7 +115,7 @@ def search_tweets_tweepy(query, start_time, end_time, file_name):
             tweet_row.append(user_objects[tweet.author_id]['authorName'])
             tweet_row.append(user_objects[tweet.author_id]['authorUsername'])
             tweet_row.append((user_objects[tweet.author_id]['authorCreatedAt']
-                              - datetime.timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S'))
+                            - datetime.timedelta(hours=6)).strftime('%Y-%m-%d %H:%M:%S'))
             tweet_row.append(user_objects[tweet.author_id]['authorVerified'])
             tweet_row.append(user_objects[tweet.author_id]['followersCount'])
             tweet_row.append(user_objects[tweet.author_id]['followingCount'])
