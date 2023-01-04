@@ -20,9 +20,9 @@ import logging
 def compute_coherence_values(dictionary, corpus, texts, 
                             cohere, limit, start=2, step=2):
     coherence_values = []
-    chunksize = 7000
+    chunksize = 3500
     passes = 10
-    iterations = 150
+    iterations = 200
 
     for num_topics in range(start, limit, step):
         model = LdaModel(corpus=corpus, 
@@ -93,9 +93,9 @@ def main():
     for año in range(19,23):
         for mes in range (1,13):
             if mes < 10:
-                df_aux = pd.read_csv(f'./datos_limpios/clean_tweets_0{mes}{año}.csv')
+                df_aux = pd.read_csv(f'./csv_revisados/tweets_0{mes}{año}_c.csv')
             else:
-                df_aux = pd.read_csv(f'./datos_limpios/clean_tweets_{mes}{año}.csv')
+                df_aux = pd.read_csv(f'./csv_revisados/tweets_{mes}{año}_c.csv')
             
             df = pd.concat([df,df_aux], sort=False, ignore_index=True)
 
@@ -129,10 +129,10 @@ def main():
     print(f'Number of documents: {len(corpus)}')
     
     # Training the Model
-    NUM_TOPICS = 4
-    chunksize = 7000
+    NUM_TOPICS = 6
+    chunksize = 3500
     passes = 10
-    iterations = 150
+    iterations = 200
     eval_every = None
     temp = dictionary[0]
     id2word = dictionary.id2token
@@ -150,7 +150,7 @@ def main():
     )
 
     # Compute the Best Number of Topics
-    #get_topic_coherence_score()
+    #get_topic_coherence_score(dictionary, corpus, texts)
 
     # feed the LDA model into the pyLDAvis instance
     lda_viz = gensimvis.prepare(model, corpus, dictionary, sort_topics=True)
