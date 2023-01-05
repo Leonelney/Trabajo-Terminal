@@ -82,15 +82,15 @@ def mun_request(row):
 
 def main():
     
-    for año in range(20,23):
+    for año in range(19,23):
         print(año)
         for mes in range (1,13):
             print(f'\t{mes}')
             # abrimos un archivo de cada mes para hacer la limpieza
             if mes < 10:
-                df = pd.read_csv(f'./new_data/tweets_0{mes}{año}.csv')
+                df = pd.read_csv(f'./datos_filtrados/tweets_0{mes}{año}.csv')
             else:
-                df = pd.read_csv(f'./new_data/tweets_{mes}{año}.csv')
+                df = pd.read_csv(f'./datos_filtrados/tweets_{mes}{año}.csv')
             # eliminamos registros repetidos
             df = df.drop_duplicates(['pubID'])
             # obtener el municipio correcto de los registros extraídos por coordenadas
@@ -146,11 +146,20 @@ def main():
             df['pubDate'] = pd.to_datetime(df['pubDate'])
             df = df.sort_values(by='pubDate')
             # creamos los tokens de cada tweet
-            df.insert(4, "tokens", df['tweet'].apply(tokens_tweet))
+            if "tokens" in df.columns:
+                df['tokens'] = df['tweet'].apply(tokens_tweet)
+            else:
+                df.insert(4, "tokens", df['tweet'].apply(tokens_tweet))
             # crear lista de hashtags
-            df.insert(5, "hashtags", df['tweet'].apply(lambda x: re.findall("\B#([\w-]+)", x)))
+            if "hashtags" in df.columns:
+                df["hashtags"] = df['tweet'].apply(lambda x: re.findall("\B#([\w-]+)", x))
+            else:
+                df.insert(5, "hashtags", df['tweet'].apply(lambda x: re.findall("\B#([\w-]+)", x)))
             # crear lista de menciones
-            df.insert(6, "mentions", df['tweet'].apply(lambda x: re.findall("\B@([\w-]+)", x)))
+            if "mentions" in df.columns:
+                df["mentions"] = df['tweet'].apply(lambda x: re.findall("\B@([\w-]+)", x))
+            else:
+                df.insert(6, "mentions", df['tweet'].apply(lambda x: re.findall("\B@([\w-]+)", x)))
             # guardar dataset limpio
             if mes < 10:
                 df.to_csv(f'./data_clean/clean_tweets_0{mes}{año}.csv', index=False)
