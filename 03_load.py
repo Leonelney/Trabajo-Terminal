@@ -10,9 +10,9 @@ def main():
     for año in range(19,23):
         for mes in range (1,13):
             if mes < 10:
-                df_aux = pd.read_csv(f'./csv_revisados/tweets_0{mes}{año}_c.csv')
+                df_aux = pd.read_csv(f'./csv_revisados/tweets_0{mes}{año}_c.csv', lineterminator='\n')
             else:
-                df_aux = pd.read_csv(f'./csv_revisados/tweets_{mes}{año}_c.csv')
+                df_aux = pd.read_csv(f'./csv_revisados/tweets_{mes}{año}_c.csv', lineterminator='\n')
             
             df = pd.concat([df,df_aux], sort=False, ignore_index=True)
 
