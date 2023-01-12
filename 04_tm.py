@@ -86,10 +86,12 @@ def remove_one_appear(texts):
 def create_table_metadata(model,corpus):
     terms_per_topic = {}
     for i in range(4):
-        terms_per_topic[i+1] = model.show_topic(i, 20)
+        terms_per_topic[i+1] = model.show_topic(i, 25)
+
+    # print(terms_per_topic)
 
     topics_per_document = list(model.get_document_topics(corpus))
-    print(topics_per_document)
+    # print(topics_per_document)
 
     df_data = pd.read_csv('./mysql/data.csv')
     df_topics = pd.DataFrame()
@@ -97,11 +99,15 @@ def create_table_metadata(model,corpus):
 
     topic_id = []
     topic_terms = []
+    topic_relevance = []
     for key, value in terms_per_topic.items():
-        topic_id.append(key)
-        topic_terms.append(value)
+        for word, relevance in value:
+            topic_id.append(key)
+            topic_terms.append(word)
+            topic_relevance.append(float(relevance))
     df_topics['topicID'] = topic_id
-    df_topics['terms_relevance'] = topic_terms
+    df_topics['topic_terms'] = topic_terms
+    df_topics['terms_relevance'] = topic_relevance
     df_topics.to_csv('./mysql/topic.csv', index=False)
 
     idx = 1
