@@ -44,9 +44,9 @@ def compute_coherence_values(dictionary, corpus, texts,
 
 
 def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations):
-    limit=30
-    start=2
-    step=2
+    limit=10
+    start=1
+    step=1
 
     coherence_values = compute_coherence_values(dictionary=dictionary, 
                                             corpus=corpus, 
@@ -59,7 +59,8 @@ def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iter
                                             passes=passes, 
                                             iterations=iterations)
 
-    return (coherence_values.index(max(coherence_values))+1)*2
+    print(coherence_values)
+    return (coherence_values.index(max(coherence_values))+1)
     
 
 def get_ngrams(texts, n):
@@ -82,15 +83,61 @@ def remove_one_appear(texts):
             frequency[token] += 1
     return [[token for token in text if frequency[token] > 1] for text in texts]
 
+def create_table_metadata(model,corpus):
+    terms_per_topic = {}
+    for i in range(4):
+        terms_per_topic[i+1] = model.show_topic(i, 25)
+
+    # print(terms_per_topic)
+
+    topics_per_document = list(model.get_document_topics(corpus))
+    # print(topics_per_document)
+
+    df_data = pd.read_csv('./mysql/data.csv')
+    df_topics = pd.DataFrame()
+    df_pivot_topics = pd.DataFrame()
+
+    topic_id = []
+    topic_terms = []
+    topic_relevance = []
+    for key, value in terms_per_topic.items():
+        for word, relevance in value:
+            topic_id.append(key)
+            topic_terms.append(word)
+            topic_relevance.append(float(relevance))
+    df_topics['topicID'] = topic_id
+    df_topics['topic_terms'] = topic_terms
+    df_topics['terms_relevance'] = topic_relevance
+    df_topics.to_csv('./mysql/topic.csv', index=False)
+
+    idx = 1
+    pivot_id = []
+    pub_id = []
+    topic_id = []
+    prevalence = []
+    for i in range(len(topics_per_document)):
+        for topic in topics_per_document[i]:
+            pivot_id.append(f't{idx}')
+            pub_id.append(df_data['pubID'][i])
+            topic_id.append(topic[0]+1)
+            prevalence.append(topic[1])
+            idx += 1
+    df_pivot_topics['pivotID'] = pivot_id
+    df_pivot_topics['pubID'] = pub_id
+    df_pivot_topics['topicID'] = topic_id
+    df_pivot_topics['prevalence'] = prevalence
+    df_pivot_topics.to_csv('./mysql/main_topic.csv', index=False)
+
 def get_model(dictionary, corpus, texts, titulo):
     # Training the Model
-    chunksize = len(texts)
-    passes = 10
-    iterations = 200
+    chunksize = int(len(texts)/2)
+    passes = 7
+    iterations = 110
     eval_every = None
     temp = dictionary[0]
     
-    NUM_TOPICS = get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations)
+    # NUM_TOPICS = get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations)
+    NUM_TOPICS = 4
     model = LdaModel(
         corpus=corpus,
         id2word=dictionary.id2token,
@@ -106,6 +153,19 @@ def get_model(dictionary, corpus, texts, titulo):
     # feed the LDA model into the pyLDAvis instance
     lda_viz = gensimvis.prepare(model, corpus, dictionary, sort_topics=True)
     pyLDAvis.save_html(lda_viz, f'./resultados_tm/lda_{titulo}.html')
+
+    create_table_metadata(model,corpus)
+
+def init(texts, titulo):
+    # Create the dictionary
+    dictionary = corpora.Dictionary(texts)
+    dictionary.filter_extremes(no_below=int(len(texts)*0.01), no_above=0.5)
+    corpus = [dictionary.doc2bow(text) for text in texts]
+    # print tokens and len of documents
+    print(f'Number of unique tokens: {len(dictionary)}')
+    print(f'Number of documents: {len(corpus)}')
+
+    get_model(dictionary, corpus, texts, titulo)
 
 def topic_modeling(df, topics, titulo):
     texts = list(df['tokens'])
@@ -125,31 +185,9 @@ def topic_modeling(df, topics, titulo):
     texts_with_bigrams = remove_one_appear(texts_with_bigrams)
     texts_with_trigrams = remove_one_appear(texts_with_trigrams)
     
-    # Create the dictionary
-    dictionary = corpora.Dictionary(texts)
-    dictionary.filter_extremes(no_below=int(len(texts)*0.01), no_above=0.5)
-    corpus = [dictionary.doc2bow(text) for text in texts]
-    # print tokens and len of documents
-    print(f'Number of unique tokens: {len(dictionary)}')
-    print(f'Number of documents: {len(corpus)}')
-
-    dictionary_bi = corpora.Dictionary(texts_with_bigrams)
-    dictionary_bi.filter_extremes(no_below=int(len(texts)*0.01), no_above=0.5)
-    corpus_bi = [dictionary_bi.doc2bow(text) for text in texts_with_bigrams]
-    # print tokens and len of documents
-    print(f'Number of unique tokens: {len(dictionary_bi)}')
-    print(f'Number of documents: {len(corpus_bi)}')
-
-    dictionary_tri = corpora.Dictionary(texts_with_trigrams)
-    dictionary_tri.filter_extremes(no_below=int(len(texts)*0.01), no_above=0.5)
-    corpus_tri = [dictionary_tri.doc2bow(text) for text in texts_with_trigrams]
-    # print tokens and len of documents
-    print(f'Number of unique tokens: {len(dictionary_tri)}')
-    print(f'Number of documents: {len(corpus_tri)}')
-    
-    get_model(dictionary, corpus, texts, titulo)
-    get_model(dictionary_bi, corpus_bi, texts_with_bigrams, "bi_"+titulo)
-    get_model(dictionary_tri, corpus_tri, texts_with_trigrams, "tri_"+titulo)
+    # init(texts, titulo)
+    # init(texts_with_bigrams, "bi_"+titulo)
+    init(texts_with_trigrams, "tri_"+titulo)
 
 
 def main():
@@ -178,11 +216,11 @@ def main():
     ]
 
     topic_modeling(df_full, topics[0] + topics[1] + topics[2], "")
-    topic_modeling(df_pirotecnia, topics[0], "pirotecnia")
-    topic_modeling(df_incendio, topics[1], "incendio")
-    topic_modeling(df_trafico, topics[2], "trafico")
+    # topic_modeling(df_pirotecnia, topics[0], "pirotecnia")
+    # topic_modeling(df_incendio, topics[1], "incendio")
+    # topic_modeling(df_trafico, topics[2], "trafico")
 
 
 if __name__ == '__main__':
-    #logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
+    # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
     main()
