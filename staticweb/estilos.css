@@ -1,0 +1,464 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+:root{
+      --verde: #0c4414;
+      --limon: #1bc518;
+    --degradado:linear-gradient(90deg, var(--limon), var(--verde));
+}
+
+*{
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    border: none;
+    text-transform: capitalize;
+}
+
+*::selection{
+    background: var(--limon);
+    color:white;
+}
+
+html{
+    font-size: 62.4%;
+    
+}
+
+body{
+    background: whitesmoke;
+}
+
+section{
+    min-height: 100vh;
+    padding: 0 9%;
+    padding-top: 7.5rem;
+    padding-bottom: 2rem;
+}
+
+.btn{
+    display: inline-block;
+    margin-top: 1rem;
+    padding: .8rem 3rem;
+    border-radius: 5rem;
+    background: var(--degradado);
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
+    transition: all.3s linear;
+}
+
+.btn:hover{
+    transform: scale(1.1);
+}
+
+.btn1{
+    display: inline-block;
+    margin-top: 1rem;
+    padding: .8rem 3rem;
+    border-radius: 5rem;
+    background: var(--degradado);
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
+    transition: all.3s linear;
+}
+
+.btn1:hover{
+    transform: scale(1.1);
+}
+
+.heading{
+    text-align: center;
+    background: var(--verde);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: 3rem;
+    text-transform: uppercase;
+    padding: 1rem;
+}
+
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 .5rem 1rem rgba (0,0,0,.1);
+    padding: 2rem 9%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+header .logo{
+    font-size: 2rem;
+    color: var(--verde);
+}
+
+header .logo span{
+    color: var(--limon);
+}
+
+header .navbar a{
+    font-size: 1.2rem;
+    margin-left: 2rem;
+    color: var(--verde);
+}
+
+header .navbar a:hover{
+    color:var (--limon);
+}
+
+header input{
+    display: none;
+}
+
+header label{
+    font-size: 3rem;
+    color: var(--verde);
+    cursor: pointer;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.inicio{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url(../img/inicio_fondo.png) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.inicio .image img{
+    width: 60vb;
+    height: 90vb;
+}
+
+.inicio .content h3{
+    font-size: 2rem;
+    color:#333;
+}
+
+.inicio .content h3 span{
+    color: var(--limon);
+}
+
+.inicio .content p{
+    font-size: 1.7rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.proyecto p{
+    font-size: 1.5rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.proyecto .heading p{
+    font-size: 1.5rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.proyecto .caja-contenedor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.proyecto .caja-contenedor .caja{
+    flex: 1 1 30rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: .1rem solid rgba(0, 0,0, .1);
+    box-shadow: 0.5rem 1rem rgba(0, 0,0, .2);
+    margin: 1.5rem;
+    padding: 3rem 2rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.proyecto .caja-contenedor .caja img{
+    height: 50rem;
+}
+
+.proyecto .caja-contenedor .caj img{
+    height: 20rem;
+}
+
+
+.proyecto .caja-contenedor .caja h3{
+    font-size: 3rem;
+    color: #333;
+    padding-top: 1rem;
+}
+
+.proyecto .caja-contenedor .caja p{
+    font-size: 1.3rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+
+.proyecto .caja-contenedor .caj{
+    flex: 1 1 30rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: .1rem solid rgba(0, 0,0, .1);
+    box-shadow: 0.5rem 1rem rgba(0, 0,0, .2);
+    margin: 1.5rem;
+    padding: 3rem 2rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.proyecto .caja-contenedor .caj img{
+    height: 40rem;
+}
+
+.proyecto .caja-contenedor .caj h3{
+    font-size: 3rem;
+    color: #333;
+    padding-top: 1rem;
+}
+
+.proyecto .caja-contenedor .caj p{
+    font-size: 1.3rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.Tránsito .caja-contenedor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.Tránsito .caja-contenedor .caja{
+    flex: 1 1 30rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: .1rem solid rgba(0, 0,0, .1);
+    box-shadow: 0.5rem 1rem rgba(0, 0,0, .2);
+    margin: 1.5rem;
+    padding: 3rem 2rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.Tránsito .caja-contenedor .caja img{
+    height: 50rem;
+}
+
+.Tránsito .caja-contenedor .caja h3{
+    font-size: 3rem;
+    color: #333;
+    padding-top: 1rem;
+}
+
+.Tránsito .caja-contenedor .caja p{
+    font-size: 1.3rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.Pirotecnia .caja-contenedor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.Pirotecnia .caja-contenedor .caja{
+    flex: 1 1 30rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: .1rem solid rgba(0, 0,0, .1);
+    box-shadow: 0.5rem 1rem rgba(0, 0,0, .2);
+    margin: 1.5rem;
+    padding: 3rem 2rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.Pirotecnia .caja-contenedor .caja img{
+    height: 50rem;
+}
+
+
+.Pirotecnia .caja-contenedor .caja h3{
+    font-size: 2rem;
+    color: #333;
+    padding-top: 1rem;
+}
+
+.Pirotecnia .caja-contenedor .caja p{
+    font-size: 1.3rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+
+
+.Incendios .caja-contenedor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.Incendios .caja-contenedor .caja{
+    flex: 1 1 30rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: .1rem solid rgba(0, 0,0, .1);
+    box-shadow: 0.5rem 1rem rgba(0, 0,0, .2);
+    margin: 1.5rem;
+    padding: 3rem 2rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.Incendios .caja-contenedor .caja img{
+    height: 50rem;
+}
+
+.Incendios .caja-contenedor .caja h3{
+    font-size: 2rem;
+    color: #333;
+    padding-top: 1rem;
+}
+
+.Incendios .caja-contenedor .caja p{
+    font-size: 1.3rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.des.caja-contenedor{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.des .caja-contenedor .caja{
+    flex: 1 1 30rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: .1rem solid rgba(0, 0,0, .1);
+    box-shadow: 0.5rem 1rem rgba(0, 0,0, .2);
+    margin: 1.5rem;
+    padding: 3rem 2rem;
+    border-radius: .5rem;
+    text-align: center;
+}
+
+.des .caja-contenedor .caja img{
+    height: 30rem;
+}
+
+.des .caja-contenedor .caja h3{
+    font-size: 3rem;
+    color: #333;
+    padding-top: 1rem;
+}
+
+.des .caja-contenedor .caja p{
+    font-size: 1.3rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+.des p{
+    font-size: 1.5rem;
+    color: #666;
+    padding: 1rem 0;
+}
+
+
+
+@media (max-width: 1200px){
+    html{
+        font-size: 55%;
+    }
+}
+
+@media (max-width:990px){
+    section{
+        padding: 0 3%;
+        padding-top: 7.5rem;
+        padding-bottom: 2rem;
+    }
+}
+
+@media (max-width: 768px){
+    header label{
+        visibility: visible;
+        opacity: 1;
+    }
+
+    header .navbar{
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 1rem 2rem;
+        border-top: .1rem solid rgba(0, 0,0, .2);
+        box-shadow: 0 .5re 1rem rgba(0,0,0,.1);
+        transform-origin: top;
+        transform: scaleY(0);
+        opacity: 0;
+    }
+
+    header .navbar a{
+        display: block;
+        margin: 2rem 0;
+        font-size: 2rem;
+    }
+
+    header input:checked ~ .navbar{
+        transform: scaleY(1);
+        opacity: 1;
+    }
+
+    header input:checked ~ laber::before{
+        content: '\f00d';
+    }
+
+    .inicio{
+        flex-flow: column-reverse;
+    }
+
+    inicio .image img{
+        width: 100%;
+    }
+    
+    .inicio ,content h3{
+        font-size: 2rem;
+    }
+
+    .inicio .content p{
+        font-size: 1.9rem;
+    }
+
+}
+
+@media (max-width:450px) {
+    html{
+        font-size: 49%;
+    }
+}
+
