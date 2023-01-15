@@ -37,6 +37,8 @@ class database:
         self.df = pd.concat([self.df, pd.DataFrame(rows, columns=self.columns)], sort=False)
 
     def save_df(self, year, month):
+        self.df.sort_values('pubID', inplace=True)
+        self.df.drop_duplicates(subset='pubID', keep=False, inplace=True)
         self.df.to_csv(f'./01_tweets/tweets_{month}{year}.csv', index=False)
         self.log_df(year, month)
 
@@ -130,8 +132,10 @@ def main():
                 geocode_keywords = " ".join([geocode, exceptions_alcaldia])
                 query = f'{query_keywords} {alcaldia_keywords} since:{start_date_time} until:{end_date_time} -is:retweet lang:es'
                 query_geocode = f'{query_keywords} {geocode_keywords} since:{start_date_time} until:{end_date_time} -is:retweet lang:es'
+                print(query)
                 results = search_tweets_snscrape(query, topic, 'palabras clave', alc, meta_alc["clave_alcaldia"], meta_alc["latitud"], meta_alc["longitud"])
                 my_df.append_rows(results)
+                print(query_geocode)
                 results = search_tweets_snscrape(query_geocode, topic, 'coordenadas', alc, meta_alc["clave_alcaldia"], meta_alc["latitud"], meta_alc["longitud"])
                 my_df.append_rows(results)
 
