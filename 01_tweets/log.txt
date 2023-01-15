@@ -1,0 +1,1 @@
+Se creo el archivo "tweets_0119" con 13375 registros: [pirotecnia: 0, tránsito: 10653, incendio: 2722]
