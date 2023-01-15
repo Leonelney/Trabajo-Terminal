@@ -81,16 +81,17 @@ def mun_request(row):
 
 
 def main():
-    
+    # abrimos el csv con los topics
+    with open("./00_querys/topics.json") as file:
+        parameters = json.load(file)
+    # exploramos cada año
     for año in range(19,23):
-        print(año)
         for mes in range (1,13):
-            print(f'\t{mes}')
             # abrimos un archivo de cada mes para hacer la limpieza
             if mes < 10:
-                df = pd.read_csv(f'./datos_filtrados/tweets_0{mes}{año}.csv')
+                df = pd.read_csv(f'./01_tweets/tweets_0{mes}{año}.csv')
             else:
-                df = pd.read_csv(f'./datos_filtrados/tweets_{mes}{año}.csv')
+                df = pd.read_csv(f'./01_tweets/tweets_{mes}{año}.csv')
             # eliminamos registros repetidos
             df = df.drop_duplicates(['pubID'])
             # obtener el municipio correcto de los registros extraídos por coordenadas

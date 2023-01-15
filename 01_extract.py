@@ -94,7 +94,7 @@ def main():
         parameters = json.load(file)
 
     # for para cada mes del año
-    for count in range(1,2):
+    for count in range(1,13):
         # creamos nuestro dataframe para guardar los resultados
         my_df = database()
         # creamos las fechas para el intervalo de tiempo de la query
@@ -119,27 +119,28 @@ def main():
 
         # creación de las querys
         for topic, meta in parameters["topics"].items():
+            # palabras clave
             keywords = f'({" OR ".join(meta["sinonimos"])})'
-            contains = f'({" OR ".join(meta["contains"])})'
-            not_contains = f'-({" OR ".join(meta["not_contains"])})'
-            query_keywords = " ".join([keywords])
             
             for alc, meta_alc in parameters["geo"].items():
+                # creamos las palabras clave de alcaldía e incluimos conjuntos de palabras que no queremos
                 alcaldia = f'({" OR ".join(meta_alc["sinonimos"])})'
                 geocode = f'geocode:{meta_alc["latitud"]},{meta_alc["longitud"]},{meta_alc["radio"]}'
                 exceptions_alcaldia = f'-("calle {alc}" OR "av {alc}" OR "avenida {alc}" OR "col {alc}" OR "colonia {alc}" OR "carretera {alc}" OR "ciudad {alc}")'
                 alcaldia_keywords = " ".join([alcaldia, exceptions_alcaldia])
                 geocode_keywords = " ".join([geocode, exceptions_alcaldia])
-                query = f'{query_keywords} {alcaldia_keywords} since:{start_date_time} until:{end_date_time} -is:retweet lang:es'
-                query_geocode = f'{query_keywords} {geocode_keywords} since:{start_date_time} until:{end_date_time} -is:retweet lang:es'
-                print(query)
+                # creamos los dos tipos de query (por palabras clave y por geocode)
+                query = f'{keywords} {alcaldia_keywords} since:{start_date_time} until:{end_date_time} -is:retweet lang:es'
+                query_geocode = f'{keywords} {geocode_keywords} since:{start_date_time} until:{end_date_time} -is:retweet lang:es'
+                # extraemos los tweets con la query de palabras clave
                 results = search_tweets_snscrape(query, topic, 'palabras clave', alc, meta_alc["clave_alcaldia"], meta_alc["latitud"], meta_alc["longitud"])
                 my_df.append_rows(results)
-                print(query_geocode)
+                # extraemos los tweets con la query de geocode
                 results = search_tweets_snscrape(query_geocode, topic, 'coordenadas', alc, meta_alc["clave_alcaldia"], meta_alc["latitud"], meta_alc["longitud"])
                 my_df.append_rows(results)
 
         my_df.save_df(start_date[2:4], start_date[5:7])
+        print(f'mes {count} concluido')
 
 
 if __name__ == '__main__':

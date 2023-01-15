@@ -1,2 +1,3 @@
-Se creo el archivo "tweets_0119" con 13375 registros: [pirotecnia: 0, tránsito: 10653, incendio: 2722]
-Se creo el archivo "tweets_0119" con 3239 registros: [pirotecnia: 0, tránsito: 2233, incendio: 1006]
+Se creo el archivo "tweets_0121" con 2266 registros: [pirotecnia: 0, tránsito: 1406, incendio: 860]
+Se creo el archivo "tweets_0122" con 3568 registros: [pirotecnia: 0, tránsito: 2007, incendio: 1561]
+Se creo el archivo "tweets_0119" con 3243 registros: [pirotecnia: 0, tránsito: 2239, incendio: 1004]
