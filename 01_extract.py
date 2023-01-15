@@ -42,7 +42,7 @@ class database:
         self.log_df(year, month)
 
     def log_df(self, year, month):
-        with open("./01_tweets/log.txt", "a") as file:
+        with open("./01_tweets/01_log.txt", "a") as file:
             file.write(f'Se creo el archivo "tweets_{month}{year}" con {len(self.df)} registros: ')
             file.write(f'[pirotecnia: {len(self.df[self.df.topicQuery == "pirotecnia"])}, tránsito: {len(self.df[self.df.topicQuery == "tránsito"])}, incendio: {len(self.df[self.df.topicQuery == "incendio"])}]')
             file.write('\n')

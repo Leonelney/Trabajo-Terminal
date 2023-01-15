@@ -10,6 +10,7 @@ confection==0.0.3
 contourpy==1.0.6
 cycler==0.11.0
 cymem==2.0.7
+emoji==2.2.0
 es-core-news-lg @ https://github.com/explosion/spacy-models/releases/download/es_core_news_lg-3.4.0/es_core_news_lg-3.4.0-py3-none-any.whl
 es-core-news-md @ https://github.com/explosion/spacy-models/releases/download/es_core_news_md-3.4.0/es_core_news_md-3.4.0-py3-none-any.whl
 es-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.4.0/es_core_news_sm-3.4.0-py3-none-any.whl

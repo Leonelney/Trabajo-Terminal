@@ -3,17 +3,17 @@
         "pirotecnia":{
             "sinonimos":["pirotecnia", "cohete", "'fuegos artificiales'","'juegos pirotécnicos'"],
             "contains":["quema","detonación","precaución","contaminar","contaminación","sufre", "explosivos","castillo","salud","contingencia","ambiental","aire","lanzar","lanzamiento", "medidas"],
-            "not_contains":["encanta","bala","suplir", "acto", "perdió", "diversión","edomex","spacex","deprimente","monterrey", "gracias", "virtualización"]
+            "not_contains":["encanta","bala","suplir", "acto", "perdió", "diversión","edomex","spacex","deprimente","monterrey", "gracias", "virtualización","by"]
         },
         "tránsito":{
             "sinonimos":["tránsito", "tráfico", "circulación" ],
             "contains": ["accidente","solicita","solicitar","reglamento","obstruye","camion","camiones","aire","contaminar","contaminación","estacionado","lento","fila","denuncia","denunciar","reporte","reportar","reportan","cierra","agentes","ciclovia","carril"],
-            "not_contains":["favorable","fluido","moderado","pelea","'estado de méxico'","edomex","tlalnepantla","vtlalne","encanta","gobnau","asalto","zmg","sin tráfico","araña","rentar","by","teatro","delito","conozca","gracias","anexo","recomienda","felicidades", "tomar","acuden","suerte","corrupto","estrategia","'envía personal'"]
+            "not_contains":["favorable","fluido","moderado","pelea","estado de méxico","edomex","tlalnepantla","vtlalne","encanta","gobnau","asalto","zmg","sin tráfico","araña","rentar","by","teatro","delito","conozca","gracias","anexo","recomienda","felicidades", "tomar","acuden","suerte","corrupto","estrategia","envía personal","agradecemos","saludos","tijuana","saltillo","infracción","xalapa","monterrey","ZonaSegPuebla"]
         },
         "incendio":{
             "sinonimos":["incendio", "fuego", "quema"],
-            "contains":["fábrica","emergencia","bomberos","consume","reporte","reportar","reportan","reportó","'casa habitación'","departamento","atienden","causa","sofocan","vehículo"],
-            "not_contains": ["arma","armas","noticias","asalto","asaltando","controlado","proyectil","tecamachalco","acapulco","cancun","traga","brasil","'fuego amigo'","sella"]
+            "contains":["fábrica","emergencia","bomberos","consume","reporte","reportar","reportan","reportó","casa habitación","departamento","atienden","causa","sofocan","vehículo"],
+            "not_contains": ["arma","armas","noticias","asalto","asaltando","controlado","proyectil","tecamachalco","acapulco","cancun","traga","brasil","fuego amigo","sella","PGJ revela","nanchital","pobreza","presunta omisión","by"]
         }
     },
     "geo":{
