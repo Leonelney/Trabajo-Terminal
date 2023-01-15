@@ -3,12 +3,12 @@
         "pirotecnia":{
             "sinonimos":["pirotecnia", "cohete", "'fuegos artificiales'","'juegos pirotécnicos'"],
             "contains":["quema","detonación","precaución","contaminar","contaminación","sufre", "explosivos","castillo","salud","contingencia","ambiental","aire","lanzar","lanzamiento", "medidas"],
-            "not_contains":["encanta","bala","suplir", "acto", "perdió", "diversión", "edomex"]
+            "not_contains":["encanta","bala","suplir", "acto", "perdió", "diversión","edomex","spacex","deprimente","monterrey", "gracias", "virtualización"]
         },
         "tránsito":{
             "sinonimos":["tránsito", "tráfico", "circulación" ],
             "contains": ["accidente","solicita","solicitar","reglamento","obstruye","camion","camiones","aire","contaminar","contaminación","estacionado","lento","fila","denuncia","denunciar","reporte","reportar","reportan","cierra","agentes","ciclovia","carril"],
-            "not_contains":["favorable","fluido","moderado","pelea","'estado de méxico'","edomex","tlalnepantla","vtlalne","encanta","gobnau","asalto","zmg","sin tráfico","araña","rentar","by","teatro","delito"]
+            "not_contains":["favorable","fluido","moderado","pelea","'estado de méxico'","edomex","tlalnepantla","vtlalne","encanta","gobnau","asalto","zmg","sin tráfico","araña","rentar","by","teatro","delito","conozca","gracias","anexo","recomienda","felicidades", "tomar","acuden","suerte","corrupto","estrategia","'envía personal'"]
         },
         "incendio":{
             "sinonimos":["incendio", "fuego", "quema"],

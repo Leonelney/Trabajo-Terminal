@@ -38,7 +38,6 @@ class database:
 
     def save_df(self, year, month):
         self.df.sort_values('pubID', inplace=True)
-        self.df.drop_duplicates(subset='pubID', keep=False, inplace=True)
         self.df.to_csv(f'./01_tweets/tweets_{month}{year}.csv', index=False)
         self.log_df(year, month)
 
@@ -120,11 +119,11 @@ def main():
         # creación de las querys
         for topic, meta in parameters["topics"].items():
             # palabras clave
-            keywords = f'({" OR ".join(meta["sinonimos"])})'
+            keywords = f'({" OR ".join(meta["sinonimos"])})'.replace("'",'"')
             
             for alc, meta_alc in parameters["geo"].items():
                 # creamos las palabras clave de alcaldía e incluimos conjuntos de palabras que no queremos
-                alcaldia = f'({" OR ".join(meta_alc["sinonimos"])})'
+                alcaldia = f'({" OR ".join(meta_alc["sinonimos"])})'.replace("'",'"')
                 geocode = f'geocode:{meta_alc["latitud"]},{meta_alc["longitud"]},{meta_alc["radio"]}'
                 exceptions_alcaldia = f'-("calle {alc}" OR "av {alc}" OR "avenida {alc}" OR "col {alc}" OR "colonia {alc}" OR "carretera {alc}" OR "ciudad {alc}")'
                 alcaldia_keywords = " ".join([alcaldia, exceptions_alcaldia])
