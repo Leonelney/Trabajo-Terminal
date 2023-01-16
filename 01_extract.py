@@ -54,7 +54,7 @@ def search_tweets_snscrape(query, topic, type_query, name_mun, geoid, latitud, l
         tweet_row.append(tweet.id)
         tweet_row.append(topic)
         tweet_row.append(type_query)
-        tweet_row.append(tweet.content)
+        tweet_row.append(tweet.content.replace("\n"," "))
         tweet_row.append(tweet.likeCount)
         tweet_row.append(tweet.replyCount)
         tweet_row.append(tweet.retweetCount)

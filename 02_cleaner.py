@@ -37,7 +37,7 @@ def tokens_tweet(tweet):
     spell = Speller(lang='es')
     interesting_tokens = [spell(w) for w in interesting_tokens]
     # lematización
-    nlp = spacy.load("es_dep_news_trf")
+    nlp = spacy.load("es_core_news_md")
     doc = nlp(' '.join(interesting_tokens))
     interesting_tokens = [w.lemma_ for w in doc]
 
