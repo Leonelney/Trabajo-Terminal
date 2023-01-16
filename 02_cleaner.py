@@ -37,7 +37,7 @@ def tokens_tweet(tweet):
     spell = Speller(lang='es')
     interesting_tokens = [spell(w) for w in interesting_tokens]
     # lematización
-    nlp = spacy.load("es_dep_news_trf")
+    nlp = spacy.load("es_core_news_md")
     doc = nlp(' '.join(interesting_tokens))
     interesting_tokens = [w.lemma_ for w in doc]
 
@@ -100,8 +100,8 @@ def main():
     with open("./00_querys/topics.json") as file:
         parameters = json.load(file)
     # exploramos cada año
-    for año in range(19,23):
-        for mes in range (1,13):
+    for año in range(21,22):
+        for mes in range (11,13):
             # abrimos un archivo de cada mes para hacer la limpieza
             if mes < 10:
                 df = pd.read_csv(f'./01_tweets/tweets_0{mes}{año}.csv')
