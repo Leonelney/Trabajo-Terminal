@@ -100,7 +100,7 @@ def main():
     with open("./00_querys/topics.json") as file:
         parameters = json.load(file)
     # exploramos cada año
-    for año in range(21,22):
+    for año in range(22,23):
         for mes in range (11,13):
             # abrimos un archivo de cada mes para hacer la limpieza
             if mes < 10:

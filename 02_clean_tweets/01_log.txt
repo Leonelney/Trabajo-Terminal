@@ -8,3 +8,5 @@ Se creo el archivo "tweets_0821" con 1324 registros: [pirotecnia: 10, tránsito:
 Se creo el archivo "tweets_0921" con 1341 registros: [pirotecnia: 38, tránsito: 1100, incendio: 203]
 Se creo el archivo "tweets_1121" con 1835 registros: [pirotecnia: 5, tránsito: 1331, incendio: 499]
 Se creo el archivo "tweets_1221" con 1809 registros: [pirotecnia: 64, tránsito: 1387, incendio: 358]
+Se creo el archivo "tweets_1122" con 958 registros: [pirotecnia: 17, tránsito: 690, incendio: 251]
+Se creo el archivo "tweets_1222" con 911 registros: [pirotecnia: 62, tránsito: 562, incendio: 287]
