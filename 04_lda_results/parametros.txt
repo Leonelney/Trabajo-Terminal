@@ -1,0 +1,9 @@
+unigramas
+	passes = 9
+	iterations = 300
+bigramas
+	passes = 7
+	iterations = 280
+trigramas
+	passes = 7
+	iterations = 280

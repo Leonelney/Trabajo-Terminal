@@ -1,6 +1,7 @@
-import ast
 import numpy as np
 import pandas as pd
+import sys
+import json
 from collections import defaultdict
 
 from gensim import corpora
@@ -15,7 +16,6 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import seaborn as sns
 import logging
-
 
 def compute_coherence_values(dictionary, corpus, texts, 
                             cohere, limit, start, step,
@@ -43,10 +43,42 @@ def compute_coherence_values(dictionary, corpus, texts,
     return coherence_values
 
 
-def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations):
-    limit=10
-    start=1
-    step=1
+def get_graphic_coherencia(coherence_values, start, step, limit, titulo):
+    plt.figure(figsize=(8,5))
+
+    # Create a custom x-axis
+    x = range(start, limit, step)
+
+    # Build the line plot
+    ax = sns.lineplot(x=x, y=coherence_values, color='#238C8C')
+
+    # Set titles and labels
+    plt.title("Best Number of Topics for LDA Model")
+    plt.xlabel("Num Topics")
+    plt.ylabel("Coherence score")
+    plt.xlim(start, limit)
+    plt.xticks(range(2, limit, step))
+
+    # Add a vertical line to show the optimum number of topics
+    plt.axvline(x[np.argmax(coherence_values)], 
+                color='#F26457', linestyle='--')
+
+    # Draw a custom legend
+    legend_elements = [Line2D([0], [0], color='#238C8C', 
+                            ls='-', label='Coherence Value (c_v)'),
+                    Line2D([0], [1], color='#F26457', 
+                            ls='--', label='Optimal Number of Topics')]
+
+    ax.legend(handles=legend_elements, loc='upper right')
+    
+    plt.tight_layout()
+    plt.savefig(f'./04_lda_results/topic_coherence_{titulo}.png', dpi=300)
+
+
+def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations, titulo):
+    limit=30
+    start=2
+    step=2
 
     coherence_values = compute_coherence_values(dictionary=dictionary, 
                                             corpus=corpus, 
@@ -59,8 +91,9 @@ def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iter
                                             passes=passes, 
                                             iterations=iterations)
 
-    print(coherence_values)
-    return (coherence_values.index(max(coherence_values))+1)
+    get_graphic_coherencia(coherence_values, start, step, limit, titulo)
+
+    return (coherence_values.index(max(coherence_values))+1)*2
     
 
 def get_ngrams(texts, n):
@@ -76,6 +109,7 @@ def get_ngrams(texts, n):
             res.append(aux)
         return res
 
+
 def remove_one_appear(texts):
     frequency = defaultdict(int)
     for text in texts:
@@ -83,17 +117,16 @@ def remove_one_appear(texts):
             frequency[token] += 1
     return [[token for token in text if frequency[token] > 1] for text in texts]
 
-def create_table_metadata(model,corpus):
-    terms_per_topic = {}
-    for i in range(4):
-        terms_per_topic[i+1] = model.show_topic(i, 25)
 
-    # print(terms_per_topic)
+def create_table_metadata(model, corpus, num_topics):
+    terms_per_topic = {}
+    
+    for i in range(num_topics):
+        terms_per_topic[i+1] = model.show_topic(i, 30)
 
     topics_per_document = list(model.get_document_topics(corpus))
-    # print(topics_per_document)
 
-    df_data = pd.read_csv('./mysql/data.csv')
+    df_data = pd.read_csv('./03_tables/dim_metadata.csv')
     df_topics = pd.DataFrame()
     df_pivot_topics = pd.DataFrame()
 
@@ -108,7 +141,7 @@ def create_table_metadata(model,corpus):
     df_topics['topicID'] = topic_id
     df_topics['topic_terms'] = topic_terms
     df_topics['terms_relevance'] = topic_relevance
-    df_topics.to_csv('./mysql/topic.csv', index=False)
+    df_topics.to_csv('./03_tables/dim_topic.csv', index=False)
 
     idx = 1
     pivot_id = []
@@ -120,24 +153,30 @@ def create_table_metadata(model,corpus):
             pivot_id.append(f't{idx}')
             pub_id.append(df_data['pubID'][i])
             topic_id.append(topic[0]+1)
-            prevalence.append(topic[1])
+            prevalence.append(float(topic[1]))
             idx += 1
     df_pivot_topics['pivotID'] = pivot_id
     df_pivot_topics['pubID'] = pub_id
     df_pivot_topics['topicID'] = topic_id
     df_pivot_topics['prevalence'] = prevalence
-    df_pivot_topics.to_csv('./mysql/main_topic.csv', index=False)
+    df_pivot_topics.to_csv('./03_tables/hechos_topic.csv', index=False)
+
 
 def get_model(dictionary, corpus, texts, titulo):
     # Training the Model
     chunksize = int(len(texts)/2)
-    passes = 7
-    iterations = 110
+    passes = int(sys.argv[3])
+    iterations = int(sys.argv[4])
     eval_every = None
     temp = dictionary[0]
     
-    # NUM_TOPICS = get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations)
-    NUM_TOPICS = 4
+    if sys.argv[2] == "-t":
+        NUM_TOPICS = get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations, titulo)
+    if sys.argv[2] == "-p":
+        NUM_TOPICS = 4
+    if sys.argv[2] == "-c":
+        NUM_TOPICS = int(sys.argv[5])
+    
     model = LdaModel(
         corpus=corpus,
         id2word=dictionary.id2token,
@@ -150,16 +189,19 @@ def get_model(dictionary, corpus, texts, titulo):
         eval_every=eval_every
     )
 
-    # feed the LDA model into the pyLDAvis instance
-    lda_viz = gensimvis.prepare(model, corpus, dictionary, sort_topics=True)
-    pyLDAvis.save_html(lda_viz, f'./resultados_tm/lda_{titulo}.html')
+    if sys.argv[2] == "-c":
+        # feed the LDA model into the pyLDAvis instance
+        lda_viz = gensimvis.prepare(model, corpus, dictionary, sort_topics=False)
+        pyLDAvis.save_html(lda_viz, f'./04_lda_results/lda_{titulo}.html')
 
-    create_table_metadata(model,corpus)
+        # crea la tablas de dim_topic y hechos_topic
+        create_table_metadata(model,corpus,NUM_TOPICS)
+
 
 def init(texts, titulo):
     # Create the dictionary
     dictionary = corpora.Dictionary(texts)
-    dictionary.filter_extremes(no_below=int(len(texts)*0.01), no_above=0.5)
+    dictionary.filter_extremes(no_below=250, no_above=0.5)
     corpus = [dictionary.doc2bow(text) for text in texts]
     # print tokens and len of documents
     print(f'Number of unique tokens: {len(dictionary)}')
@@ -167,13 +209,14 @@ def init(texts, titulo):
 
     get_model(dictionary, corpus, texts, titulo)
 
+
 def topic_modeling(df, topics, titulo):
     texts = list(df['tokens'])
-    texts = [ast.literal_eval(tokens) for tokens in texts]
-
+    texts = [str(tokens).split(",") for tokens in texts]
+    
     # delete topics
     for i in range(len(texts)):
-        for topic in topics:
+        for topic in topics[df.loc[i,"topicQuery"]]["sinonimos_tokens"]:
             texts[i] = list(filter((topic).__ne__, texts[i]))
 
     # create n-grams
@@ -185,23 +228,24 @@ def topic_modeling(df, topics, titulo):
     texts_with_bigrams = remove_one_appear(texts_with_bigrams)
     texts_with_trigrams = remove_one_appear(texts_with_trigrams)
     
-    # init(texts, titulo)
-    # init(texts_with_bigrams, "bi_"+titulo)
-    init(texts_with_trigrams, "tri_"+titulo)
+    if sys.argv[1] == "-u":
+        init(texts, titulo)
+    elif sys.argv[1] == "-b":
+        init(texts_with_bigrams, "bi_"+titulo)
+    elif sys.argv[1] == "-t":
+        init(texts_with_trigrams, "tri_"+titulo)
+    else:
+        print("ERROR: no se selecciono el tipo de token")
 
 
 def main():
-    df = pd.DataFrame()
-    for año in range(19,23):
-        for mes in range (1,13):
-            if mes < 10:
-                df_aux = pd.read_csv(f'./csv_revisados/tweets_0{mes}{año}_c.csv')
-            else:
-                df_aux = pd.read_csv(f'./csv_revisados/tweets_{mes}{año}_c.csv')
-            
-            df = pd.concat([df,df_aux], sort=False, ignore_index=True)
+    # creamos un dataframe a partir de la tabla de metadatos y la tabla de hechos
+    df_metadata = pd.read_csv(f'./03_tables/dim_metadata.csv')
+    df_hechos = pd.read_csv(f'./03_tables/dim_hechos.csv')
+    df = df_metadata[['pubID','tokens']]
+    df.insert(1, 'topicQuery', df_hechos['topicQuery'])
 
-    df_full = df
+    # creamos diferentes dataframes para cada uno de los temas
     filtro = df['topicQuery'] == 'pirotecnia'
     df_pirotecnia = df[filtro]
     filtro = df['topicQuery'] == 'incendio'
@@ -209,13 +253,11 @@ def main():
     filtro = df['topicQuery'] == 'tránsito'
     df_trafico = df[filtro]
 
-    topics = [
-        ['pirotecnia', 'cohete', 'fuego', 'artificial'], 
-        ['incendio', 'humo', 'fuego'],
-        ['tránsito', 'tráfico']
-    ]
+    # abrimos el csv con los topics
+    with open("./00_querys/topics.json") as file:
+        parameters = json.load(file)
 
-    topic_modeling(df_full, topics[0] + topics[1] + topics[2], "")
+    topic_modeling(df, parameters['topics'], "general")
     # topic_modeling(df_pirotecnia, topics[0], "pirotecnia")
     # topic_modeling(df_incendio, topics[1], "incendio")
     # topic_modeling(df_trafico, topics[2], "trafico")

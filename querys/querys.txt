@@ -1,3 +1,0 @@
-(pirotecnia OR cohete OR "fuego artificial" OR "fuegos artificiales" OR petardo)
-(tránsito OR tráfico OR circulación OR translado)
-(incendio OR quema OR humo OR fuego)

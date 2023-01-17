@@ -1,0 +1,136 @@
+{
+    "topics":{
+        "pirotecnia":{
+            "sinonimos":["pirotecnia", "cohete", "'fuegos artificiales'","'juegos pirotécnicos'"],
+            "sinonimos_tokens":["pirotecnia","cohete","cohetes","fuego","artificial","juego","pirotécnico"],
+            "contains":["quema","detonación","precaución","contaminar","contaminación","sufre", "explosivos","castillo","salud","contingencia","ambiental","aire","lanzar","lanzamiento", "medidas"],
+            "not_contains":["encanta","bala","suplir", "acto", "perdió", "diversión","edomex","spacex","deprimente","monterrey", "gracias", "virtualización","by"]
+        },
+        "tránsito":{
+            "sinonimos":["tránsito", "tráfico", "circulación"],
+            "sinonimos_tokens":["tránsito","tráfico","circulación"],
+            "contains": ["accidente","solicita","solicitar","reglamento","obstruye","camion","camiones","aire","contaminar","contaminación","estacionado","lento","fila","denuncia","denunciar","reporte","reportar","reportan","cierra","agentes","ciclovia","carril"],
+            "not_contains":["favorable","fluido","moderado","pelea","estado de méxico","edomex","tlalnepantla","vtlalne","encanta","gobnau","asalto","zmg","sin tráfico","araña","rentar","by","teatro","delito","conozca","gracias","anexo","recomienda","felicidades", "tomar","acuden","suerte","corrupto","estrategia","envía personal","agradecemos","saludos","tijuana","saltillo","infracción","xalapa","monterrey","ZonaSegPuebla"]
+        },
+        "incendio":{
+            "sinonimos":["incendio", "fuego", "quema"],
+            "sinonimos_tokens":["incendio","fuego","quema"],
+            "contains":["fábrica","emergencia","bomberos","consume","reporte","reportar","reportan","reportó","casa habitación","departamento","atienden","causa","sofocan","vehículo"],
+            "not_contains": ["arma","armas","noticias","asalto","asaltando","controlado","proyectil","tecamachalco","acapulco","cancun","traga","brasil","fuego amigo","sella","PGJ revela","nanchital","pobreza","presunta omisión","by"]
+        }
+    },
+    "geo":{
+        "Azcapotzalco":{
+            "sinonimos":["azcapotzalco"],
+            "clave_alcaldia":2,
+            "longitud":-99.1821069423,
+            "latitud":19.4853286147,
+            "radio":"5km"
+        },
+        "Coyoacán":{
+            "sinonimos":["coyoacán"],
+            "clave_alcaldia":3,
+            "longitud":-99.1503763525,
+            "latitud":19.3266672536,
+            "radio":"6km"
+        },
+        "Cuajimalpa de Morelos":{
+            "sinonimos":["'cuajimalpa de morelos'","cuajimalpa"],
+            "clave_alcaldia":4,
+            "longitud":-99.3107285253,
+            "latitud":19.3246343001,
+            "radio":"10km"
+        },
+        "Gustavo A. Madero":{
+            "sinonimos":["'gustavo a. madero'","'gustavo madero'","gam"],
+            "clave_alcaldia":5,
+            "longitud":-99.1158642087,
+            "latitud":19.5040652077,
+            "radio":"9km"
+        },
+        "Iztacalco":{
+            "sinonimos":["iztacalco"],
+            "clave_alcaldia":6,
+            "longitud":-99.0943297970,
+            "latitud":19.3969118970,
+            "radio":"5km"
+        },
+        "Iztapalapa":{
+            "sinonimos":["iztapalapa"],
+            "clave_alcaldia":7,
+            "longitud":-99.0567989642,
+            "latitud":19.3491663204,
+            "radio":"9km"
+        },
+        "La Magdalena Contreras":{
+            "sinonimos":["'magdalena contreras'","mc"],
+            "clave_alcaldia":8,
+            "longitud":-99.2684129061,
+            "latitud":19.2689765031,
+            "radio":"10km"
+        },
+        "Milpa Alta":{
+            "sinonimos":["'milpa alta'","ma"],
+            "clave_alcaldia":9,
+            "longitud":-99.0510954218,
+            "latitud":19.1394565999,
+            "radio":"11km"
+        },
+        "Álvaro Obregón":{
+            "sinonimos":["'álvaro obregón'","ao"],
+            "clave_alcaldia":10,
+            "longitud":-99.2468197120,
+            "latitud":19.3361755620,
+            "radio":"9km"
+        },
+        "Tláhuac":{
+            "sinonimos":["tláhuac"],
+            "clave_alcaldia":11,
+            "longitud":-99.0028216137,
+            "latitud":19.2769983772,
+            "radio":"7km"
+        },
+        "Tlalpan":{
+            "sinonimos":["tlalpan"],
+            "clave_alcaldia":12,
+            "longitud":-99.2062207957,
+            "latitud":19.1983396763,
+            "radio":"11km"
+        },
+        "Xochimilco":{
+            "sinonimos":["xochimilco"],
+            "clave_alcaldia":13,
+            "longitud":-99.0903636045,
+            "latitud":19.2451450458,
+            "radio":"7km"
+        },
+        "Benito Juárez":{
+            "sinonimos":["'benito juárez'","bj"],
+            "clave_alcaldia":14,
+            "longitud":-99.1611346584,
+            "latitud":19.3806424162,
+            "radio":"3km"
+        },
+        "Cuauhtémoc":{
+            "sinonimos":["cuauhtémoc"],
+            "clave_alcaldia":15,
+            "longitud":-99.1490557562,
+            "latitud":19.4313734294,
+            "radio":"4km"
+        },
+        "Miguel Hidalgo":{
+            "sinonimos":["'Miguel Hidalgo'","mh"],
+            "clave_alcaldia":16,
+            "longitud":-99.2045669144,
+            "latitud":19.4280623649,
+            "radio":"5km"
+        },
+        "Venustiano Carranza":{
+            "sinonimos":["'venustiano carranza'","vc"],
+            "clave_alcaldia":17,
+            "longitud":-99.0931057959,
+            "latitud":19.4304954545,
+            "radio":"5km"
+        }
+    }
+}

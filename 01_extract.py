@@ -89,7 +89,7 @@ def main():
     year = input('Define the year (YYYY): ')
 
     # abrimos el csv con los topics
-    with open("./00_querys/topics.json") as file:
+    with open("./00_parameters_querys/topics.json") as file:
         parameters = json.load(file)
 
     # for para cada mes del año
