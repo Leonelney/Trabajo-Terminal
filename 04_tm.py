@@ -189,6 +189,8 @@ def get_model(dictionary, corpus, texts, titulo):
         eval_every=eval_every
     )
 
+    print(model.top_topics(corpus, texts, dictionary))
+
     if sys.argv[2] == "-c":
         # feed the LDA model into the pyLDAvis instance
         lda_viz = gensimvis.prepare(model, corpus, dictionary, sort_topics=False)
@@ -254,7 +256,7 @@ def main():
     df_trafico = df[filtro]
 
     # abrimos el csv con los topics
-    with open("./00_querys/topics.json") as file:
+    with open("./00_parameters_querys/topics.json") as file:
         parameters = json.load(file)
 
     topic_modeling(df, parameters['topics'], "general")
