@@ -20,7 +20,7 @@ import logging
 def compute_coherence_values(dictionary, corpus, texts, 
                             cohere, limit, start, step,
                             chunksize, passes, iterations):
-    
+    # obtenemos la coherencia del modelo
     coherence_values = []
 
     for num_topics in range(start, limit, step):
@@ -76,6 +76,7 @@ def get_graphic_coherencia(coherence_values, start, step, limit, titulo):
 
 
 def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iterations, titulo):
+    # obtener número optimo de temas para el modelo de topic modeling
     limit=30
     start=2
     step=2
@@ -97,6 +98,7 @@ def get_topic_coherence_score(dictionary, corpus, texts, chunksize, passes, iter
     
 
 def get_ngrams(texts, n):
+    # crear n-gramas
     if n < 2:
         return texts
     else:
@@ -111,6 +113,7 @@ def get_ngrams(texts, n):
 
 
 def remove_one_appear(texts):
+    # remover palabras que aparecen solo una vez
     frequency = defaultdict(int)
     for text in texts:
         for token in text:
@@ -120,7 +123,7 @@ def remove_one_appear(texts):
 
 def create_table_metadata(model, corpus, num_topics):
     terms_per_topic = {}
-    
+    # se crean las tablas de los resultados del topic modeling
     for i in range(num_topics):
         terms_per_topic[i+1] = model.show_topic(i, 30)
 
@@ -163,7 +166,7 @@ def create_table_metadata(model, corpus, num_topics):
 
 
 def get_model(dictionary, corpus, texts, titulo):
-    # Training the Model
+    # entrenamos el programa
     chunksize = int(len(texts)/2)
     passes = int(sys.argv[3])
     iterations = int(sys.argv[4])
@@ -192,7 +195,7 @@ def get_model(dictionary, corpus, texts, titulo):
     print(model.top_topics(corpus, texts, dictionary))
 
     if sys.argv[2] == "-c":
-        # feed the LDA model into the pyLDAvis instance
+        # creamos una gráfica del modelo LDA
         lda_viz = gensimvis.prepare(model, corpus, dictionary, sort_topics=False)
         pyLDAvis.save_html(lda_viz, f'./04_lda_results/lda_{titulo}.html')
 
@@ -201,11 +204,11 @@ def get_model(dictionary, corpus, texts, titulo):
 
 
 def init(texts, titulo):
-    # Create the dictionary
+    # crear diccionario
     dictionary = corpora.Dictionary(texts)
     dictionary.filter_extremes(no_below=250, no_above=0.5)
     corpus = [dictionary.doc2bow(text) for text in texts]
-    # print tokens and len of documents
+    # imprimir tamaño del conjunto de tokens y documentos
     print(f'Number of unique tokens: {len(dictionary)}')
     print(f'Number of documents: {len(corpus)}')
 
@@ -216,16 +219,16 @@ def topic_modeling(df, topics, titulo):
     texts = list(df['tokens'])
     texts = [str(tokens).split(",") for tokens in texts]
     
-    # delete topics
+    # eliminar tópicos
     for i in range(len(texts)):
         for topic in topics[df.loc[i,"topicQuery"]]["sinonimos_tokens"]:
             texts[i] = list(filter((topic).__ne__, texts[i]))
 
-    # create n-grams
+    # crear n-gramas
     texts_with_bigrams = get_ngrams(texts, 2)
     texts_with_trigrams = get_ngrams(texts, 3)
 
-    # remove words that appear only once
+    # quitar palabras que aparecen una vez
     texts = remove_one_appear(texts)
     texts_with_bigrams = remove_one_appear(texts_with_bigrams)
     texts_with_trigrams = remove_one_appear(texts_with_trigrams)
@@ -259,10 +262,11 @@ def main():
     with open("./00_parameters_querys/topics.json") as file:
         parameters = json.load(file)
 
+    # inicializamos el proceso de topic modeling
     topic_modeling(df, parameters['topics'], "general")
-    # topic_modeling(df_pirotecnia, topics[0], "pirotecnia")
-    # topic_modeling(df_incendio, topics[1], "incendio")
-    # topic_modeling(df_trafico, topics[2], "trafico")
+    # topic_modeling(df_pirotecnia, parameters['topics'], "pirotecnia")
+    # topic_modeling(df_incendio, parameters['topics'], "incendio")
+    # topic_modeling(df_trafico, parameters['topics'], "trafico")
 
 
 if __name__ == '__main__':

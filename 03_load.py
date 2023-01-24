@@ -7,6 +7,7 @@ def deEmojify(text):
     return emoji.replace_emoji(text, "")
 
 def main():
+    # abrimos todos los datasets y los combinamos 
     df = pd.DataFrame()
     for año in range(19,23):
         for mes in range (1,13):
@@ -17,6 +18,7 @@ def main():
             
             df = pd.concat([df,df_aux], sort=False, ignore_index=True)
 
+    # creamos cada tabla de la base de datos en dataframes
     main = df[['pubID', 'topicQuery', 'tweet', 'likeCount', 
                 'replyCount', 'retweetCount', 'authorID']]
     data = df[['pubID', 'tokens', 'mentions', 'hashtags']]
@@ -27,6 +29,7 @@ def main():
                 'pubHour', 'pubMinute']]
     coordinates = df[['geoID', 'geoName', 'longitude', 'latitude']]
 
+    # agregamos id a algunas tablas y complementamos otras
     idx = list(df.index)
     main['tweet'] = main['tweet'].apply(lambda x: x.replace("\n", " "))
     main['tweet'] = main['tweet'].apply(deEmojify)
@@ -41,6 +44,7 @@ def main():
     date.insert(0, 'dateID', list(map(lambda x: 'd'+str(x+1), idx)))
     coordinates.insert(0, 'coordinateID', list(map(lambda x: 'c'+str(x+1), idx)))
 
+    # obtenemos las tablas en formato CSV
     main.to_csv('./03_tables/dim_hechos.csv', index=False)
     data.to_csv('./03_tables/dim_metadata.csv', index=False)
     author.to_csv('./03_tables/dim_usuario.csv', index=False)

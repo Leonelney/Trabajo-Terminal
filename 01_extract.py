@@ -5,7 +5,7 @@ import pandas as pd
 import json
 
 class database:
-
+    # inicializar dataframe
     def __init__(self):
         self.columns =  ['pubID',
                         'topicQuery',
@@ -36,11 +36,13 @@ class database:
     def append_rows(self, rows):
         self.df = pd.concat([self.df, pd.DataFrame(rows, columns=self.columns)], sort=False)
 
+    # guardar datasets
     def save_df(self, year, month):
         self.df.sort_values('pubID', inplace=True)
         self.df.to_csv(f'./01_tweets/tweets_{month}{year}.csv', index=False)
         self.log_df(year, month)
 
+    # crear log con conteo de tweets
     def log_df(self, year, month):
         with open("./01_tweets/01_log.txt", "a") as file:
             file.write(f'Se creo el archivo "tweets_{month}{year}" con {len(self.df)} registros: ')
@@ -49,6 +51,7 @@ class database:
 
 def search_tweets_snscrape(query, topic, type_query, name_mun, geoid, latitud, longitud):
     results = []
+    # hacer consulta de tweets y guardar metadatos en listas
     for tweet in list(sntwitter.TwitterSearchScraper(query).get_items()):
         tweet_row = []
         tweet_row.append(tweet.id)
@@ -109,6 +112,7 @@ def main():
         else:
             end_date= f'{year}-{count+1}-01'
 
+        # obtener fechas de inicio y final en formato UTC
         start_date_time = datetime.datetime.strptime(start_date, '%Y-%m-%d') + \
                     datetime.timedelta(hours=6)
         start_date_time = calendar.timegm(start_date_time.utctimetuple())
@@ -138,6 +142,7 @@ def main():
                 results = search_tweets_snscrape(query_geocode, topic, 'coordenadas', alc, meta_alc["clave_alcaldia"], meta_alc["latitud"], meta_alc["longitud"])
                 my_df.append_rows(results)
 
+        # guardar dataset
         my_df.save_df(start_date[2:4], start_date[5:7])
         print(f'mes {count} concluido')
 
